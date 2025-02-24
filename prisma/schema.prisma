@@ -1,0 +1,66 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id        String    @id @default(uuid())
+  username  String    @unique
+  name      String
+  admin     Boolean
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
+
+  carrinho  Carrinho?
+
+  @@map("users")
+}
+
+model Produto {
+  id          String    @id @default(uuid())
+  name        String    @unique
+  descricao   String
+  preco       Float
+  quantidade  Int
+
+  imagens     Imagem[] // Adicionando a relação com o modelo Imagem
+  carrinhos   CarrinhoProduto[]
+
+  @@map("produto")
+}
+
+model Imagem {
+  id        String   @id @default(uuid())
+  url       String   // URL da imagem
+  idProduto String   // Chave estrangeira para o produto
+
+  produto   Produto  @relation(fields: [idProduto], references: [id]) // Relação com o Produto
+
+  @@map("imagem")
+}
+
+model Carrinho {
+  id          String     @id @default(uuid())
+  idUsuario   String     @unique
+
+  user        User       @relation(fields: [idUsuario], references: [id])
+  produtos    CarrinhoProduto[]
+
+  @@map("carrinho")
+}
+
+model CarrinhoProduto {
+  idCarrinho  String
+  idProduto   String
+  quantidade  Int      @default(1)
+
+  carrinho    Carrinho @relation(fields: [idCarrinho], references: [id])
+  produto     Produto  @relation(fields: [idProduto], references: [id])
+
+  @@id([idCarrinho, idProduto])
+  @@map("carrinho_produto")
+}
