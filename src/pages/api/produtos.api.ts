@@ -10,10 +10,9 @@ export default async function handler(
   res: NextApiResponse,
 ): Promise<void> {
   try {
-    // Buscar todos os produtos incluindo as imagens
     const produtos = await prisma.produto.findMany({
       include: {
-        imagens: true, // Incluir as imagens associadas ao produto
+        imagens: true,
       },
     })
     res.status(200).json(produtos)
@@ -26,11 +25,10 @@ export default async function handler(
 
 export async function get(id: string, res: NextApiResponse): Promise<void> {
   try {
-    // Buscar um produto específico incluindo as imagens
     const produto = await prisma.produto.findUnique({
       where: { id },
       include: {
-        imagens: true, // Incluir as imagens associadas ao produto
+        imagens: true,
       },
     })
     res.status(200).json(produto)

@@ -1,1 +1,1 @@
-export { default } from './home/index.page'
+export { default } from './catalogo/index.page'

@@ -1,6 +1,6 @@
 import { GetServerSideProps } from 'next'
 import prisma from '../../lib/prisma'
-import { Produto } from '../home/index.page'
+import { Produto } from '../catalogo/index.page'
 import { Container, Image } from './style'
 import React from 'react'
 import Slider from 'react-slick'
@@ -47,10 +47,7 @@ export default function ProdutoDetalhado({ produto }: ProdutoDetalhadoProps) {
         <Slider {...settings}>
           {produto.imagens.map((imagem, index) => (
             <div key={index}>
-              <Image
-                src={imagem.url || 'https://picsum.photos/200'}
-                alt={produto.name}
-              />
+              <Image src={imagem.url} alt={produto.name} />
             </div>
           ))}
         </Slider>

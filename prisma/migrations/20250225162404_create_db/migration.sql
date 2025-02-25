@@ -1,8 +1,9 @@
 -- CreateTable
 CREATE TABLE "users" (
     "id" TEXT NOT NULL PRIMARY KEY,
-    "username" TEXT NOT NULL,
+    "email" TEXT NOT NULL,
     "name" TEXT NOT NULL,
+    "password" TEXT NOT NULL,
     "admin" BOOLEAN NOT NULL,
     "created_at" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updated_at" DATETIME NOT NULL
@@ -14,8 +15,15 @@ CREATE TABLE "produto" (
     "name" TEXT NOT NULL,
     "descricao" TEXT NOT NULL,
     "preco" REAL NOT NULL,
-    "imagem" TEXT NOT NULL,
     "quantidade" INTEGER NOT NULL
+);
+
+-- CreateTable
+CREATE TABLE "imagem" (
+    "id" TEXT NOT NULL PRIMARY KEY,
+    "url" TEXT NOT NULL,
+    "idProduto" TEXT NOT NULL,
+    CONSTRAINT "imagem_idProduto_fkey" FOREIGN KEY ("idProduto") REFERENCES "produto" ("id") ON DELETE RESTRICT ON UPDATE CASCADE
 );
 
 -- CreateTable
@@ -37,7 +45,7 @@ CREATE TABLE "carrinho_produto" (
 );
 
 -- CreateIndex
-CREATE UNIQUE INDEX "users_username_key" ON "users"("username");
+CREATE UNIQUE INDEX "users_email_key" ON "users"("email");
 
 -- CreateIndex
 CREATE UNIQUE INDEX "produto_name_key" ON "produto"("name");

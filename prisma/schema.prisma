@@ -9,8 +9,9 @@ datasource db {
 
 model User {
   id        String    @id @default(uuid())
-  username  String    @unique
+  email  String    @unique
   name      String
+  password      String
   admin     Boolean
   created_at DateTime @default(now())
   updated_at DateTime @updatedAt

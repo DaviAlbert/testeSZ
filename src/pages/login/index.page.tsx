@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import Cookies from 'js-cookie'
 import { useRouter } from 'next/router'
 import {
   Container,
@@ -31,9 +32,17 @@ export default function Cadastro() {
       })
 
       if (response.ok) {
-        console.log('Cadastro realizado com sucesso!')
+        const data = await response.json()
 
+        const token = JSON.stringify(data.user)
+        console.log('Token recebido:', token)
+
+        Cookies.set('authToken', token, { expires: 1 })
+
+        console.log('Cadastro realizado com sucesso!')
         router.push('http://localhost:3000/')
+      } else {
+        console.log('Erro na resposta do servidor', response.statusText)
       }
     } catch (error) {
       console.log(`Erro ao conectar com o servidor: ${error}`)

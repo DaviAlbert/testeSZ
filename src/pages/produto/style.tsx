@@ -14,5 +14,5 @@ export const Image = styled('img', {
   maxWidth: '100%',
   maxHeight: '100%',
   borderRadius: '8px',
-  margin:'auto',
+  margin: 'auto',
 })

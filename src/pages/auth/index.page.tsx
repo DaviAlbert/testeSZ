@@ -1,9 +1,13 @@
 import { useState } from 'react'
+import { useRouter } from 'next/router'
 import { Container, Campo, Label, Input, Button, Button1 } from './style'
+import Link from 'next/link'
 
-export default function Cadastro() {
+export default function Login() {
   const [email, setEmail] = useState('')
   const [senha, setSenha] = useState('')
+  const [message, setMessage] = useState('')
+  const router = useRouter()
 
   const handleEmailChange = (e: React.ChangeEvent<HTMLInputElement>): void => {
     setEmail(e.target.value)
@@ -13,11 +17,30 @@ export default function Cadastro() {
     setSenha(e.target.value)
   }
 
-  const handleSubmit = (e: React.FormEvent<HTMLFormElement>): void => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>): void => {
     e.preventDefault()
-    // Aqui você pode adicionar o que acontece quando o formulário for enviado
-    console.log('Email:', email)
-    console.log('Senha:', senha)
+
+    try {
+      const response = await fetch('/api/auth', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ email, senha }),
+      })
+
+      if (response.ok) {
+        const data = await response.json()
+        setMessage(`Login bem-sucedido! Bem-vindo, ${data.user.name}`)
+        router.push('http://localhost:3000/')
+      } else {
+        const errorData = await response.json()
+        setMessage(`Erro: ${errorData.error}`)
+      }
+    } catch (error) {
+      setMessage('Erro ao conectar com o servidor.')
+      console.error(error)
+    }
   }
 
   return (
@@ -41,9 +64,12 @@ export default function Cadastro() {
             onChange={handleSenhaChange}
           />
         </Campo>
-        <Button type="submit">Cadastrar</Button>
-        <Button1>Criar conta</Button1>
+        <Button type="submit">Entrar</Button>
       </form>
+      <Link href="/login">
+        <Button1>Criar conta</Button1>
+      </Link>
+      {message && <p>{message}</p>}
     </Container>
   )
 }
