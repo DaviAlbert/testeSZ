@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { useRouter } from 'next/router'
+import Cookies from 'js-cookie'
 import { Container, Campo, Label, Input, Button, Button1 } from './style'
 import Link from 'next/link'
 
@@ -8,14 +9,6 @@ export default function Login() {
   const [senha, setSenha] = useState('')
   const [message, setMessage] = useState('')
   const router = useRouter()
-
-  const handleEmailChange = (e: React.ChangeEvent<HTMLInputElement>): void => {
-    setEmail(e.target.value)
-  }
-
-  const handleSenhaChange = (e: React.ChangeEvent<HTMLInputElement>): void => {
-    setSenha(e.target.value)
-  }
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>): void => {
     e.preventDefault()
@@ -31,8 +24,19 @@ export default function Login() {
 
       if (response.ok) {
         const data = await response.json()
+
+        // Criando cookie com os dados do usuário (expira em 1 dia)
+        Cookies.set('authToken', JSON.stringify(data.user), {
+          expires: 1,
+          path: '/',
+        })
+
+        console.log('Cookie salvo:', Cookies.get('authToken'))
+
         setMessage(`Login bem-sucedido! Bem-vindo, ${data.user.name}`)
-        router.push('http://localhost:3000/')
+
+        // Redireciona para o catálogo
+        router.push('/catalogo')
       } else {
         const errorData = await response.json()
         setMessage(`Erro: ${errorData.error}`)
@@ -52,7 +56,7 @@ export default function Login() {
             type="email"
             placeholder="Digite seu email"
             value={email}
-            onChange={handleEmailChange}
+            onChange={(e) => setEmail(e.target.value)}
           />
         </Campo>
         <Campo>
@@ -61,7 +65,7 @@ export default function Login() {
             type="password"
             placeholder="Digite sua senha"
             value={senha}
-            onChange={handleSenhaChange}
+            onChange={(e) => setSenha(e.target.value)}
           />
         </Campo>
         <Button type="submit">Entrar</Button>

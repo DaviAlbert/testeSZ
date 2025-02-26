@@ -16,3 +16,34 @@ export const Image = styled('img', {
   borderRadius: '8px',
   margin: 'auto',
 })
+
+export const Button = styled('button', {
+  textAlign: 'center',
+  padding: '$3',
+  width: '100%',
+  border: 'none',
+  borderRadius: '$sm',
+  fontSize: '$md',
+  backgroundColor: '$ignite500',
+  color: '$white',
+  marginTop: '$2',
+  cursor: 'pointer',
+  transition: 'background 0.2s',
+
+  '&:hover': {
+    backgroundColor: '$ignite300',
+  },
+})
+
+export const TextArea = styled('textarea', {
+  width: '100%',
+  height: '100px',
+  padding: '8px',
+  margin: '5px 0',
+})
+
+export const Input = styled('input', {
+  width: '100%',
+  padding: '8px',
+  margin: '5px 0',
+})

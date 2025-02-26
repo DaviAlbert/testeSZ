@@ -34,13 +34,18 @@ export default function Cadastro() {
       if (response.ok) {
         const data = await response.json()
 
-        const token = JSON.stringify(data.user)
-        console.log('Token recebido:', token)
+        console.log('Cadastro realizado com sucesso!', data)
 
-        Cookies.set('authToken', token, { expires: 1 })
+        // Criando cookie com token de autenticação
+        Cookies.set('authToken', JSON.stringify(data.user), {
+          expires: 1,
+          path: '/',
+        })
 
-        console.log('Cadastro realizado com sucesso!')
-        router.push('http://localhost:3000/')
+        console.log('Cookie salvo:', Cookies.get('authToken'))
+
+        // Redirecionando para a página inicial
+        router.push('/')
       } else {
         console.log('Erro na resposta do servidor', response.statusText)
       }
@@ -88,8 +93,9 @@ export default function Cadastro() {
           <Label>Admin</Label>
         </CheckboxContainer>
         <Button type="submit">Cadastrar</Button>
-        <Button1>Criar conta</Button1>
       </form>
+      {/* Redireciona para a página de autenticação */}
+      <Button1 onClick={() => router.push('/auth')}>Ir para Login</Button1>
     </Container>
   )
 }

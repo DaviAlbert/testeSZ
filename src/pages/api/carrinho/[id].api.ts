@@ -22,7 +22,7 @@ export default async function handler(
       })
 
       if (carrinho) {
-        // Criar a resposta com os produtos e suas quantidades
+        // Retorna os produtos e suas quantidades para o carrinho
         const produtosCarrinho = carrinho.produtos.map((item) => ({
           name: item.produto.name,
           quantidade: item.quantidade,

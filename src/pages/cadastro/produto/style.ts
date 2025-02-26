@@ -9,6 +9,11 @@ export const Container = styled('div', {
   gap: '$6',
 })
 
+export const Campo = styled('div', {
+  marginTop: '20px',
+  width: '100%',
+})
+
 export const SearchInput = styled('input', {
   width: '100%',
   maxWidth: 400,
@@ -21,6 +26,41 @@ export const SearchInput = styled('input', {
 
   '&::placeholder': {
     color: '$gray400',
+  },
+})
+
+export const CheckInput = styled('input', {
+  appearance: 'none',
+  marginTop: '5px',
+  width: '119px',
+  height: '20',
+  borderRadius: '$sm',
+  border: '2px solid $gray500',
+  backgroundColor: '$gray900',
+  cursor: 'pointer',
+  transition: 'all 0.2s ease-in-out',
+
+  '&:hover': {
+    borderColor: '$gray300',
+  },
+
+  '&:checked': {
+    backgroundColor: '$gray100',
+    borderColor: '$gray100',
+    position: 'relative',
+
+    '&::after': {
+      content: '""',
+      display: 'block',
+      width: 10,
+      height: 10,
+      backgroundColor: '$gray900',
+      borderRadius: 2,
+      position: 'absolute',
+      top: '50%',
+      left: '50%',
+      transform: 'translate(-50%, -50%)',
+    },
   },
 })
 
@@ -41,6 +81,11 @@ export const ProductCard = styled('div', {
   boxShadow: '0 2px 10px rgba(0,0,0,0.1)',
   width: '50%',
   margin: 'auto',
+  overflow: 'hidden',
+})
+
+export const ProductForm = styled('form', {
+  width: '100%',
 })
 
 export const ProductImage = styled('img', {

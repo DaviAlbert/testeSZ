@@ -126,7 +126,7 @@ export const ModalOverlay = styled('div', {
 })
 
 export const Modal = styled('div', {
-  background: '$gray800',
+  background: 'white',
   padding: '20px',
   borderRadius: '8px',
   width: '300px',
@@ -146,6 +146,21 @@ export const ModalInput = styled('input', {
 })
 
 export const Nav = styled('nav', {
+  display: 'flex',
+  flexDirection: 'column',
+  alignItems: 'center',
+  gap: '10px',
+  marginTop: '5px',
+
+  a: {
+    color: 'white',
+    textDecoration: 'none',
+    fontWeight: 'bold',
+    fontSize: '16px',
+  },
+})
+
+export const Titulo = styled('h2', {
   display: 'flex',
   flexDirection: 'column',
   alignItems: 'center',

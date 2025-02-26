@@ -30,7 +30,8 @@
     "react-slick": "^0.30.3",
     "react-slideshow-image": "^4.3.2",
     "slick-carousel": "^1.8.1",
-    "styled-components": "^6.1.15"
+    "styled-components": "^6.1.15",
+    "zod": "^3.24.2"
   },
   "devDependencies": {
     "@rocketseat/eslint-config": "^1.1.3",

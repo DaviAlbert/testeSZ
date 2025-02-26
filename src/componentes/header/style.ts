@@ -12,24 +12,27 @@ export const HeaderContainer = styled('header', {
   left: 0,
   zIndex: 100,
   boxShadow: '0px 4px 8px rgba(0, 0, 0, 0.2)',
+
+  div: {
+    display: 'flex',
+
+    '& > *:hover': {
+      opacity: '0.5',
+    },
+  },
+
+  h3: {
+    marginTop: '3px',
+
+    '&:hover': {
+      opacity: '0.5',
+    },
+  },
 })
 
 export const Logo = styled('h1', {
   fontSize: '24px',
   cursor: 'pointer',
-})
-
-export const Nav = styled('nav', {
-  display: 'flex',
-  alignItems: 'center',
-  gap: '20px',
-
-  a: {
-    color: 'white',
-    textDecoration: 'none',
-    fontWeight: 'bold',
-    fontSize: '16px',
-  },
 })
 
 export const SearchInput = styled('input', {
@@ -49,6 +52,14 @@ export const UserSection = styled('div', {
   display: 'flex',
   alignItems: 'center',
   gap: '15px',
+
+  div: {
+    cursor: 'pointer',
+  },
+
+  p: {
+    cursor: 'pointer',
+  },
 
   button: {
     background: '#f39c12',
@@ -83,22 +94,37 @@ export const CartBadge = styled('span', {
 
 export const DropdownMenu = styled('div', {
   position: 'absolute',
-  top: '50px',
-  right: '30px',
-  background: 'white',
+  top: '1%',
+  right: '1.5%',
+  background: '$gray600',
   color: 'black',
   borderRadius: '5px',
   boxShadow: '0px 4px 8px rgba(0, 0, 0, 0.2)',
   padding: '10px',
   width: '120px',
-  display: 'none',
+  zIndex: 200,
+
+  variants: {
+    isOpen: {
+      true: { display: 'block' },
+      false: { display: 'none' },
+    },
+  },
 })
 
-export const DropdownItem = styled('div', {
+export const DropdownItem = styled('button', {
+  display: 'flex',
   padding: '8px',
+  backgroundColor: 'red',
   cursor: 'pointer',
+  margin: 'auto',
 
   '&:hover': {
-    background: '#f2f2f2',
+    opacity: '0.8',
   },
+})
+
+export const LogoHeader = styled('img', {
+  width: '30px',
+  height: 'auto',
 })

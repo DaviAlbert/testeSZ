@@ -9,9 +9,9 @@ datasource db {
 
 model User {
   id        String    @id @default(uuid())
-  email  String    @unique
+  email     String    @unique
   name      String
-  password      String
+  password  String
   admin     Boolean
   created_at DateTime @default(now())
   updated_at DateTime @updatedAt
@@ -28,7 +28,7 @@ model Produto {
   preco       Float
   quantidade  Int
 
-  imagens     Imagem[] // Adicionando a relação com o modelo Imagem
+  imagens     Imagem[] 
   carrinhos   CarrinhoProduto[]
 
   @@map("produto")
@@ -36,10 +36,10 @@ model Produto {
 
 model Imagem {
   id        String   @id @default(uuid())
-  url       String   // URL da imagem
-  idProduto String   // Chave estrangeira para o produto
+  url       String   
+  idProduto String   
 
-  produto   Produto  @relation(fields: [idProduto], references: [id]) // Relação com o Produto
+  produto   Produto  @relation(fields: [idProduto], references: [id], onDelete: Cascade)
 
   @@map("imagem")
 }
@@ -59,8 +59,8 @@ model CarrinhoProduto {
   idProduto   String
   quantidade  Int      @default(1)
 
-  carrinho    Carrinho @relation(fields: [idCarrinho], references: [id])
-  produto     Produto  @relation(fields: [idProduto], references: [id])
+  carrinho    Carrinho @relation(fields: [idCarrinho], references: [id], onDelete: Cascade)
+  produto     Produto  @relation(fields: [idProduto], references: [id], onDelete: Cascade)
 
   @@id([idCarrinho, idProduto])
   @@map("carrinho_produto")

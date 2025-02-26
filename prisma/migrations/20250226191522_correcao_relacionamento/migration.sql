@@ -23,7 +23,7 @@ CREATE TABLE "imagem" (
     "id" TEXT NOT NULL PRIMARY KEY,
     "url" TEXT NOT NULL,
     "idProduto" TEXT NOT NULL,
-    CONSTRAINT "imagem_idProduto_fkey" FOREIGN KEY ("idProduto") REFERENCES "produto" ("id") ON DELETE RESTRICT ON UPDATE CASCADE
+    CONSTRAINT "imagem_idProduto_fkey" FOREIGN KEY ("idProduto") REFERENCES "produto" ("id") ON DELETE CASCADE ON UPDATE CASCADE
 );
 
 -- CreateTable
@@ -40,8 +40,8 @@ CREATE TABLE "carrinho_produto" (
     "quantidade" INTEGER NOT NULL DEFAULT 1,
 
     PRIMARY KEY ("idCarrinho", "idProduto"),
-    CONSTRAINT "carrinho_produto_idCarrinho_fkey" FOREIGN KEY ("idCarrinho") REFERENCES "carrinho" ("id") ON DELETE RESTRICT ON UPDATE CASCADE,
-    CONSTRAINT "carrinho_produto_idProduto_fkey" FOREIGN KEY ("idProduto") REFERENCES "produto" ("id") ON DELETE RESTRICT ON UPDATE CASCADE
+    CONSTRAINT "carrinho_produto_idCarrinho_fkey" FOREIGN KEY ("idCarrinho") REFERENCES "carrinho" ("id") ON DELETE CASCADE ON UPDATE CASCADE,
+    CONSTRAINT "carrinho_produto_idProduto_fkey" FOREIGN KEY ("idProduto") REFERENCES "produto" ("id") ON DELETE CASCADE ON UPDATE CASCADE
 );
 
 -- CreateIndex

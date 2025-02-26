@@ -15,8 +15,7 @@ import {
   ModalContent,
   ModalOverlay,
   Quantidade,
-  Nav,
-  SearchInput,
+  Titulo,
 } from './style'
 import Header from '../../componentes/header'
 import Footer from '../../componentes/footer'
@@ -87,7 +86,7 @@ export default function Home() {
       const response = await fetch('/api/produtos')
       const data = await response.json()
       setProdutos(data)
-      setQuantidades(data.map((produto: Produto) => produto.quantidade)) // Definir quantidades
+      setQuantidades(data.map((produto: Produto) => produto.quantidade))
     }
     fetchProdutos()
   }, [])
@@ -138,15 +137,10 @@ export default function Home() {
     setIsCartOpen(!isCartOpen)
   }
 
-  // Filtra os produtos com base no nome, descrição e preço
-  const filteredProdutos = produtos.filter(
-    (produto) =>
-      produto.name.toLowerCase().includes(produtoPesquisa.toLowerCase()) ||
-      produto.descricao.toLowerCase().includes(produtoPesquisa.toLowerCase()) ||
-      String(produto.preco)
-        .toLowerCase()
-        .includes(produtoPesquisa.toLowerCase()),
-  )
+  // Ordena os produtos do mais barato para o mais caro e pega os dois primeiros produtos
+  const produtosMaisBaratos = [...produtos]
+    .sort((a, b) => a.preco - b.preco)
+    .slice(0, 2)
 
   return (
     <>
@@ -157,15 +151,36 @@ export default function Home() {
         Itens={produtosCarrinho.length}
       />
 
-      <Nav>
-        <a href="/">PRODUTOS</a>
-        <SearchInput
-          type="text"
-          placeholder="Pesquise produtos..."
-          value={produtoPesquisa}
-          onChange={(e) => setProdutoPesquisa(e.target.value)}
-        />
-      </Nav>
+      <Titulo>Produtos Mais Baratos:</Titulo>
+
+      <Container>
+        <ProductList>
+          {produtosMaisBaratos.map((produto) => (
+            <ProductCard key={produto.id}>
+              <Item onClick={() => handleClickProduto(produto.id)}>
+                {produto.name}
+              </Item>
+              {produto.imagens.length > 0 && (
+                <ProductImage
+                  src={produto.imagens[0].url}
+                  alt={produto.name}
+                  onClick={() => handleClickProduto(produto.id)}
+                />
+              )}
+              <div onClick={() => handleClickProduto(produto.id)}>
+                <Item>{produto.descricao}</Item>
+                <Item>
+                  Preço: R$ {produto.preco.toFixed(2).replace('.', ',')}
+                </Item>
+                <Item>Quantidade disponível: {produto.quantidade}</Item>
+              </div>
+              <AddToCartButton onClick={() => handleAddToCart(produto)}>
+                Adicionar no carrinho
+              </AddToCartButton>
+            </ProductCard>
+          ))}
+        </ProductList>
+      </Container>
 
       {isCartOpen && (
         <FadeIn>
@@ -192,40 +207,8 @@ export default function Home() {
         </FadeIn>
       )}
 
-      <Container>
-        <ProductList>
-          {filteredProdutos.map((produto, index) => (
-            <ProductCard key={produto.id}>
-              <Item onClick={() => handleClickProduto(produto.id)}>
-                {produto.name}
-              </Item>
-              {produto.imagens.length > 0 && (
-                <ProductImage
-                  src={produto.imagens[0].url}
-                  alt={produto.name}
-                  onClick={() => handleClickProduto(produto.id)}
-                />
-              )}
-              <div onClick={() => handleClickProduto(produto.id)}>
-                <Item>{produto.descricao}</Item>
-                <Item>Preço: {produto.preco}</Item>
-                <Item>Quantidade disponível: {produto.quantidade}</Item>
-              </div>
-              <AddToCartButton onClick={() => handleAddToCart(produto)}>
-                Adicionar no carrinho
-              </AddToCartButton>
-            </ProductCard>
-          ))}
-        </ProductList>
-        {tokenObject.current.admin ?? (
-          <AddToCartButton onClick={() => AdicionarProduto()}>
-            Criar novo Produto
-          </AddToCartButton>
-        )}
-      </Container>
-
       {modalVisible && selectedProduct && (
-        <ModalOverlay>
+        <ModalOverlay style={{backgroundColor:'$gray800'}}>
           <Modal>
             <ModalContent>
               <h3>{`Escolha a quantidade de ${selectedProduct.name}`}</h3>
@@ -236,7 +219,7 @@ export default function Home() {
                 value={selectedQuantity}
                 onChange={(e) => setSelectedQuantity(parseInt(e.target.value))}
               />
-              <div>
+              <div style={{display: 'flex', gap:'5px'}}>
                 <AddToCartButton onClick={() => setModalVisible(false)}>
                   Cancelar
                 </AddToCartButton>

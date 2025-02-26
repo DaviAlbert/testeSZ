@@ -14,10 +14,17 @@ export const FooterContainer = styled('footer', {
   gap: '$4',
   textAlign: 'center',
   marginTop: '138px',
+
+  div: {
+    display: 'flex',
+    h3: {
+      marginTop: '3px',
+    },
+  },
 })
 
 export const LogoFooter = styled('img', {
-  width: '120px',
+  width: '30px',
   height: 'auto',
   marginBottom: '$4',
 })
