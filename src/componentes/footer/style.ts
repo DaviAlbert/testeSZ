@@ -13,7 +13,7 @@ export const FooterContainer = styled('footer', {
   width: '100%',
   gap: '$4',
   textAlign: 'center',
-  marginTop: '138px',
+  marginTop: '142px',
 
   div: {
     display: 'flex',

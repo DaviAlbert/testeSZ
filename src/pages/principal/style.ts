@@ -1,7 +1,6 @@
 import { styled } from '@ignite-ui/react'
 
 export const Container = styled('div', {
-  marginLeft: 'auto',
   display: 'flex',
   flexDirection: 'column',
   alignItems: 'center',
@@ -25,11 +24,15 @@ export const SearchInput = styled('input', {
 })
 
 export const ProductList = styled('div', {
+  backgroundColor: '$gray700',
+  padding: '10px',
+  borderRadius: '8px',
   display: 'grid',
   gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))',
   gap: '$6',
   width: '100%',
   maxWidth: 1160,
+  boxShadow: '0 2px 10px rgba(0,0,0,0.2)',
 })
 
 export const ProductCard = styled('div', {
@@ -37,7 +40,7 @@ export const ProductCard = styled('div', {
   padding: '$4',
   borderRadius: '$md',
   textAlign: 'center',
-  boxShadow: '0 2px 10px rgba(0,0,0,0.1)',
+  boxShadow: '0 2px 10px rgba(0,0,0,0.4)',
   width: '50%',
   margin: 'auto',
 })

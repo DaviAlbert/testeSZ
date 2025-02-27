@@ -3,6 +3,7 @@ import Footer from '../../../componentes/footer'
 import Header from '../../../componentes/header'
 import { useRouter } from 'next/router'
 import Cookies from 'js-cookie'
+import { ProdutoSchema } from '../../../componentes/schema/schemas'
 import {
   AddToCartButton,
   Container,
@@ -25,6 +26,7 @@ export default function AddProduct() {
   const [imagens, setImagens] = useState<File[]>([])
   const [imagensBase64, setImagensBase64] = useState<string[]>([])
   const [loading, setLoading] = useState(false)
+  const [message, setMessage] = useState('')
 
   const router = useRouter()
 
@@ -49,7 +51,7 @@ export default function AddProduct() {
     }
   }, [router])
 
-  // Converter as imagens enviadas pelo usuário para Base64
+  // Converter imagens para Base64
   const convertImagesToBase64 = (files: FileList) => {
     const fileArray = Array.from(files)
     setImagens(fileArray)
@@ -69,17 +71,15 @@ export default function AddProduct() {
     })
   }
 
-  // Pega as imagens inseridas pelo usuario e envia par 'convertImagesToBase64'
   const handleImageChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     if (event.target.files) {
       convertImagesToBase64(event.target.files)
     }
   }
 
-  // Envio do formulário para o banckend, na rota 'api/adicionar-produto'
+  // Validação e envio do formulário
   const handleSubmit = async (event: React.FormEvent) => {
     event.preventDefault()
-
     setLoading(true)
 
     const produtoData = {
@@ -90,13 +90,23 @@ export default function AddProduct() {
       imagens: imagensBase64,
     }
 
+    // Validar dados antes de enviar
+    const validacao = ProdutoSchema.safeParse(produtoData)
+
+    if (!validacao.success) {
+      console.error('Erro na validação:', validacao.error)
+      setMessage('Erro nos dados do produto. Verifique os campos.')
+      setLoading(false)
+      return
+    }
+
     try {
       const response = await fetch('/api/adicionar-produto', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify(produtoData),
+        body: JSON.stringify(validacao.data),
       })
 
       if (response.ok) {
@@ -127,6 +137,7 @@ export default function AddProduct() {
         userName={userName}
         toggleCart={() => {}}
         Itens={-1}
+        Admin={isAdmin}
       />
       <Container>
         <h2>Adicionar Novo Produto</h2>
@@ -183,7 +194,7 @@ export default function AddProduct() {
                 type="file"
                 id="imagens"
                 accept="image/*"
-                multiple // Permite múltiplas imagens
+                multiple
                 onChange={handleImageChange}
                 required
               />
@@ -195,6 +206,7 @@ export default function AddProduct() {
               </AddToCartButton>
             </div>
           </ProductForm>
+          {message && <p>{message}</p>}
         </ProductCard>
       </Container>
       <Footer />

@@ -5,7 +5,6 @@ import { useState } from 'react'
 import logo from '../../../assets/logo.png'
 import {
   HeaderContainer,
-  Logo,
   UserSection,
   CartIconContainer,
   CartBadge,
@@ -21,11 +20,20 @@ interface HeaderProps {
   Itens: number
 }
 
+interface HeaderProps {
+  isLoggedIn: boolean
+  Admin: boolean
+  userName: string | null
+  toggleCart: () => void
+  Itens: number
+}
+
 export default function Header({
   isLoggedIn,
   userName,
   toggleCart,
   Itens,
+  Admin,
 }: HeaderProps) {
   const router = useRouter()
   const [isDropdownOpen, setIsDropdownOpen] = useState(false)
@@ -40,9 +48,13 @@ export default function Header({
     router.push('/auth')
   }
 
+  const AdminPage = () => {
+    router.push('/admin')
+  }
+
   return (
     <HeaderContainer>
-      <div onClick={() => router.push('/')}>
+      <div style={{ cursor: 'pointer' }} onClick={() => router.push('/')}>
         <LogoHeader src={logo.src} alt="Logo da Loja" />
         <h3>SZ soluções</h3>
       </div>
@@ -53,12 +65,15 @@ export default function Header({
             {userName} ▼
             {isDropdownOpen && (
               <DropdownMenu isOpen={isDropdownOpen}>
+                {Admin && (
+                  <DropdownItem onClick={AdminPage}>Administração</DropdownItem>
+                )}
                 <DropdownItem onClick={handleLogout}>Sair</DropdownItem>
               </DropdownMenu>
             )}
           </div>
         ) : (
-          <button onClick={() => router.push('/login')}>Entrar</button>
+          <button onClick={() => router.push('/auth')}>Entrar</button>
         )}
 
         {isLoggedIn && catalogo && (

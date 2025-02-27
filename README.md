@@ -39,14 +39,17 @@ Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/bui
 
 ##Geral:
 [x] Header
-[] Footer
+[X] Footer
+[] Modal Carrinho
 
 ##FrontEnd:
 [x] Tela de Login
 [x] Tela de Cadastro
 [x] Tela de Produto
 [x] Tela de Catalogo
-[] Tela Inicial
+[X] Tela Inicial
+[x] Tela de Adição de produtos
+[x] Tela de Adição de usuários
 [] Tela de Administrador
 
 ##BackEnd:
@@ -54,5 +57,5 @@ Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/bui
 [x] Tela de Cadastro
 [x] Tela de Produto
 [x] Tela de Catalogo
-[] Tela Inicial
+[X] Tela Inicial
 [] Tela de Administrador

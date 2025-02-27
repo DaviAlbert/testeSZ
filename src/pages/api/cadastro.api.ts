@@ -11,7 +11,8 @@ export default async function handler(
     return res.status(405).json({ error: 'Método não permitido' })
   }
 
-  const { name, email, senha, admin } = req.body
+  const { name, email, senha, admin, imagemBase64, telefone, nascimento } =
+    req.body
 
   if (!name || !email || !senha) {
     return res.status(400).json({ error: 'Todos os campos são obrigatórios' })
@@ -24,6 +25,9 @@ export default async function handler(
         email,
         password: senha,
         admin,
+        foto: imagemBase64,
+        telefone,
+        Nascimento: new Date(nascimento),
       },
     })
 

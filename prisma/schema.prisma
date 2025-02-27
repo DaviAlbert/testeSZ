@@ -13,6 +13,9 @@ model User {
   name      String
   password  String
   admin     Boolean
+  foto       String 
+  telefone String
+  Nascimento DateTime
   created_at DateTime @default(now())
   updated_at DateTime @updatedAt
 

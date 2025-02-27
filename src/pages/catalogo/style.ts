@@ -37,7 +37,7 @@ export const ProductCard = styled('div', {
   padding: '$4',
   borderRadius: '$md',
   textAlign: 'center',
-  boxShadow: '0 2px 10px rgba(0,0,0,0.1)',
+  boxShadow: '0 2px 10px rgba(0,0,0,0.4)',
   width: '50%',
   margin: 'auto',
 })

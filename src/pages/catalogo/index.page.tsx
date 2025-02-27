@@ -2,6 +2,7 @@ import { useEffect, useState, useRef } from 'react'
 import { useRouter } from 'next/router'
 import FadeIn from 'react-fade-in'
 import Cookies from 'js-cookie'
+import { z } from 'zod'
 import {
   AddToCartButton,
   Container,
@@ -20,6 +21,7 @@ import {
 } from './style'
 import Header from '../../componentes/header'
 import Footer from '../../componentes/footer'
+import { ProdutoSchema, TokenSchema } from '../../componentes/schema/schemas'
 
 export interface Produto {
   id: string
@@ -58,14 +60,24 @@ export default function Home() {
     const tokenFromCookie = Cookies.get('authToken')
 
     if (tokenFromCookie) {
-      const decodedToken = decodeURIComponent(tokenFromCookie)
-      tokenObject.current = JSON.parse(decodedToken)
+      try {
+        const decodedToken = JSON.parse(decodeURIComponent(tokenFromCookie))
+        const parsedToken = TokenSchema.safeParse(decodedToken)
+
+        if (parsedToken.success) {
+          tokenObject.current = parsedToken.data
+          setIsLoggedIn(true)
+          setUserName(parsedToken.data.name || 'Usuário')
+        } else {
+          console.error('Token inválido:', parsedToken.error)
+          router.push('/')
+        }
+      } catch (error) {
+        console.error('Erro ao decodificar o token:', error)
+        router.push('/')
+      }
     } else {
       router.push('/')
-    }
-    if (tokenObject.current.id) {
-      setIsLoggedIn(true)
-      setUserName(tokenObject.current.name || 'Usuário')
     }
   }, [])
 
@@ -84,10 +96,23 @@ export default function Home() {
 
   useEffect(() => {
     const fetchProdutos = async () => {
-      const response = await fetch('/api/produtos')
-      const data = await response.json()
-      setProdutos(data)
-      setQuantidades(data.map((produto: Produto) => produto.quantidade)) // Definir quantidades
+      try {
+        const response = await fetch('/api/produtos')
+        const data = await response.json()
+
+        const parsedProdutos = z.array(ProdutoSchema).safeParse(data)
+
+        if (parsedProdutos.success) {
+          setProdutos(parsedProdutos.data)
+          setQuantidades(
+            parsedProdutos.data.map((produto) => produto.quantidade),
+          )
+        } else {
+          console.error('Erro ao validar produtos:', parsedProdutos.error)
+        }
+      } catch (error) {
+        console.error('Erro ao buscar produtos:', error)
+      }
     }
     fetchProdutos()
   }, [])
@@ -155,6 +180,7 @@ export default function Home() {
         userName={userName}
         toggleCart={toggleCart}
         Itens={produtosCarrinho.length}
+        Admin={tokenObject.current.admin ?? false}
       />
 
       <Nav>

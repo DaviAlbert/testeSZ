@@ -15,10 +15,6 @@ export const HeaderContainer = styled('header', {
 
   div: {
     display: 'flex',
-
-    '& > *:hover': {
-      opacity: '0.5',
-    },
   },
 
   h3: {
@@ -93,6 +89,9 @@ export const CartBadge = styled('span', {
 })
 
 export const DropdownMenu = styled('div', {
+  display: 'flex',
+  flexDirection: 'column',
+  marginTop: '50px',
   position: 'absolute',
   top: '1%',
   right: '1.5%',
@@ -101,7 +100,6 @@ export const DropdownMenu = styled('div', {
   borderRadius: '5px',
   boxShadow: '0px 4px 8px rgba(0, 0, 0, 0.2)',
   padding: '10px',
-  width: '120px',
   zIndex: 200,
 
   variants: {
@@ -117,7 +115,7 @@ export const DropdownItem = styled('button', {
   padding: '8px',
   backgroundColor: 'red',
   cursor: 'pointer',
-  margin: 'auto',
+  margin: '5px auto',
 
   '&:hover': {
     opacity: '0.8',

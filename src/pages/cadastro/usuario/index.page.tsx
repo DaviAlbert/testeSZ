@@ -3,6 +3,7 @@ import Footer from '../../../componentes/footer'
 import Header from '../../../componentes/header'
 import { useRouter } from 'next/router'
 import Cookies from 'js-cookie'
+import { CadastroSchema } from '../../../componentes/schema/schemas'
 import {
   AddToCartButton,
   Container,
@@ -25,6 +26,7 @@ export default function AddProduct() {
   const [senha, setSenha] = useState('')
   const [admin, setAdmin] = useState(false)
   const [loading, setLoading] = useState(false)
+  const [message, setMessage] = useState('')
 
   const router = useRouter()
 
@@ -53,11 +55,23 @@ export default function AddProduct() {
     }
   }, [router])
 
-  // Envio do formulário para o banckend, na rota 'api/cadastro'
+  // Validação e envio do formulário
   const handleSubmit = async (event: React.FormEvent) => {
     event.preventDefault()
-
     setLoading(true)
+    setMessage('')
+
+    const usuarioData = { nome, email, senha, admin }
+
+    // Validar os dados antes de enviar
+    const validacao = CadastroSchema.safeParse(usuarioData)
+
+    if (!validacao.success) {
+      console.error('Erro na validação:', validacao.error)
+      setMessage(validacao.error.errors[0]?.message || 'Erro nos dados.')
+      setLoading(false)
+      return
+    }
 
     try {
       const response = await fetch('/api/cadastro', {
@@ -65,12 +79,11 @@ export default function AddProduct() {
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ name: nome, email, senha, admin }),
+        body: JSON.stringify(validacao.data),
       })
-      console.log(response)
 
       if (response.ok) {
-        alert('Usuario adicionado com sucesso!')
+        alert('Usuário adicionado com sucesso!')
         setNome('')
         setEmail('')
         setSenha('')
@@ -78,10 +91,10 @@ export default function AddProduct() {
         router.push('/catalogo')
       } else {
         const errorData = await response.json()
-        alert(`Erro: ${errorData.error || 'Erro desconhecido'}`)
+        setMessage(`Erro: ${errorData.error || 'Erro desconhecido'}`)
       }
     } catch (error) {
-      alert('Erro ao adicionar o usuario. Tente novamente.')
+      setMessage('Erro ao adicionar o usuário. Tente novamente.')
       console.error('Erro:', error)
     } finally {
       setLoading(false)
@@ -95,16 +108,18 @@ export default function AddProduct() {
         userName={userName}
         toggleCart={() => {}}
         Itens={-1}
+        Admin={isAdmin}
       />
       <Container>
-        <h2>Adicionar Novo Produto</h2>
+        <h2>Adicionar Novo Usuário</h2>
         <ProductCard>
           <ProductForm onSubmit={handleSubmit}>
             <Campo>
-              <label htmlFor="nome">Nome do Produto:</label>
+              <label htmlFor="nome">Nome:</label>
               <SearchInput
                 type="text"
                 id="nome"
+                value={nome}
                 onChange={(e) => setNome(e.target.value)}
                 required
               />
@@ -115,6 +130,7 @@ export default function AddProduct() {
               <SearchInput
                 type="email"
                 id="email"
+                value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 required
               />
@@ -123,10 +139,10 @@ export default function AddProduct() {
             <Campo>
               <label htmlFor="senha">Senha:</label>
               <SearchInput
-                type="number"
+                type="password"
                 id="senha"
+                value={senha}
                 onChange={(e) => setSenha(e.target.value)}
-                min="1"
                 required
               />
             </Campo>
@@ -142,10 +158,11 @@ export default function AddProduct() {
 
             <div>
               <AddToCartButton type="submit" disabled={loading}>
-                {loading ? 'Adicionando...' : 'Adicionar Usuario'}
+                {loading ? 'Adicionando...' : 'Adicionar Usuário'}
               </AddToCartButton>
             </div>
           </ProductForm>
+          {message && <p>{message}</p>}
         </ProductCard>
       </Container>
       <Footer />
