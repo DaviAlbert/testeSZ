@@ -19,18 +19,21 @@ export default function AddProduct() {
   const [isAdmin, setIsAdmin] = useState(false)
   const [userName, setUserName] = useState<string | null>(null)
 
-  const [nome, setNome] = useState('')
+  const [name, setName] = useState('')
   const [descricao, setDescricao] = useState('')
   const [quantidade, setQuantidade] = useState(1)
   const [preco, setPreco] = useState('')
-  const [imagens, setImagens] = useState<File[]>([])
-  const [imagensBase64, setImagensBase64] = useState<string[]>([])
+  const [fotoPrincipal, setFotoPrincipal] = useState<File | null>(null)
+  const [fotoPrincipalBase64, setFotoPrincipalBase64] = useState<string | null>(
+    null,
+  )
+  const [fotosOpcionais, setFotosOpcionais] = useState<File[]>([])
+  const [fotosOpcionaisBase64, setFotosOpcionaisBase64] = useState<string[]>([])
   const [loading, setLoading] = useState(false)
   const [message, setMessage] = useState('')
 
   const router = useRouter()
 
-  // Verificar autenticação e permissão de admin
   useEffect(() => {
     const tokenFromCookie = Cookies.get('authToken')
     if (tokenFromCookie) {
@@ -51,51 +54,93 @@ export default function AddProduct() {
     }
   }, [router])
 
-  // Converter imagens para Base64
-  const convertImagesToBase64 = (files: FileList) => {
-    const fileArray = Array.from(files)
-    setImagens(fileArray)
-
-    const promises = fileArray.map((file) => {
-      return new Promise<string>((resolve) => {
-        const reader = new FileReader()
-        reader.readAsDataURL(file)
-        reader.onloadend = () => {
-          resolve(reader.result as string)
-        }
-      })
-    })
-
-    Promise.all(promises).then((base64Images) => {
-      setImagensBase64(base64Images)
+  // Função para converter imagem para Base64
+  const convertToBase64 = (file: File): Promise<string> => {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader()
+      reader.readAsDataURL(file)
+      reader.onload = () => resolve(reader.result as string)
+      reader.onerror = (error) => reject(error)
     })
   }
 
-  const handleImageChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    if (event.target.files) {
-      convertImagesToBase64(event.target.files)
+  // Foto principal
+  const handleFotoPrincipalChange = async (
+    event: React.ChangeEvent<HTMLInputElement>,
+  ) => {
+    if (event.target.files && event.target.files.length > 0) {
+      const file = event.target.files[0]
+      setFotoPrincipal(file)
+
+      try {
+        const base64 = await convertToBase64(file)
+        setFotoPrincipalBase64(base64)
+      } catch (error) {
+        console.error('Erro ao converter imagem para Base64:', error)
+      }
     }
   }
 
-  // Validação e envio do formulário
+  // Fotos opcionais
+  const handleFotosOpcionaisChange = async (
+    event: React.ChangeEvent<HTMLInputElement>,
+  ) => {
+    if (event.target.files) {
+      const fileArray = Array.from(event.target.files)
+
+      if (fileArray.length + fotosOpcionais.length > 3) {
+        setMessage('Você pode adicionar no máximo 3 fotos opcionais.')
+        return
+      }
+
+      setMessage('')
+
+      try {
+        const base64Images = await Promise.all(
+          fileArray.map((file) => convertToBase64(file)),
+        )
+        setFotosOpcionais([...fotosOpcionais, ...fileArray])
+        setFotosOpcionaisBase64([...fotosOpcionaisBase64, ...base64Images])
+      } catch (error) {
+        console.error('Erro ao converter imagens opcionais para Base64:', error)
+      }
+    }
+  }
+
+  // Envio do formulário
   const handleSubmit = async (event: React.FormEvent) => {
     event.preventDefault()
+    setMessage('')
     setLoading(true)
 
-    const produtoData = {
-      nome,
-      descricao,
-      quantidade,
-      preco,
-      imagens: imagensBase64,
+    if (!fotoPrincipalBase64) {
+      setMessage('A foto principal é obrigatória.')
+      setLoading(false)
+      return
     }
 
-    // Validar dados antes de enviar
+    const imagensArray = [
+      { url: fotoPrincipalBase64 },
+      ...fotosOpcionaisBase64.map((foto) => ({ url: foto })),
+    ]
+
+    const produtoData = {
+      name,
+      descricao,
+      quantidade: Number(quantidade),
+      preco: parseFloat(preco),
+      fotoPrincipal: fotoPrincipalBase64,
+      fotosOpcionais: fotosOpcionaisBase64.map((foto) => ({ url: foto })),
+    }
+
     const validacao = ProdutoSchema.safeParse(produtoData)
 
+    console.log(validacao)
     if (!validacao.success) {
-      console.error('Erro na validação:', validacao.error)
-      setMessage('Erro nos dados do produto. Verifique os campos.')
+      setMessage(
+        validacao.error.errors[0]?.message ||
+          'Erro nos dados do produto. Verifique os campos.',
+      )
       setLoading(false)
       return
     }
@@ -103,27 +148,27 @@ export default function AddProduct() {
     try {
       const response = await fetch('/api/adicionar-produto', {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(validacao.data),
       })
 
       if (response.ok) {
-        alert('Produto adicionado com sucesso!')
-        setNome('')
+        setMessage('Produto adicionado com sucesso!')
+        setName('')
         setDescricao('')
         setQuantidade(1)
         setPreco('')
-        setImagens([])
-        setImagensBase64([])
-        router.push('/catalogo')
+        setFotoPrincipal(null)
+        setFotoPrincipalBase64(null)
+        setFotosOpcionais([])
+        setFotosOpcionaisBase64([])
+        setTimeout(() => router.push('/catalogo'), 1000)
       } else {
         const errorData = await response.json()
-        alert(`Erro: ${errorData.error || 'Erro desconhecido'}`)
+        setMessage(`Erro: ${errorData.error || 'Erro desconhecido'}`)
       }
     } catch (error) {
-      alert('Erro ao adicionar produto. Tente novamente.')
+      setMessage('Erro ao conectar com o servidor. Tente novamente.')
       console.error('Erro:', error)
     } finally {
       setLoading(false)
@@ -148,8 +193,8 @@ export default function AddProduct() {
               <SearchInput
                 type="text"
                 id="nome"
-                value={nome}
-                onChange={(e) => setNome(e.target.value)}
+                value={name}
+                onChange={(e) => setName(e.target.value)}
                 required
               />
             </Campo>
@@ -189,16 +234,30 @@ export default function AddProduct() {
             </Campo>
 
             <Campo>
-              <label htmlFor="imagens">Imagens do Produto:</label>
+              <label htmlFor="fotoPrincipal">Foto Principal:</label>
               <CheckInput
                 type="file"
-                id="imagens"
+                id="fotoPrincipal"
                 accept="image/*"
-                multiple
-                onChange={handleImageChange}
+                onChange={handleFotoPrincipalChange}
                 required
               />
             </Campo>
+
+            <Campo>
+              <label htmlFor="fotosOpcionais">Fotos Opcionais (Máx: 3):</label>
+              <CheckInput
+                type="file"
+                id="fotosOpcionais"
+                accept="image/*"
+                multiple
+                onChange={handleFotosOpcionaisChange}
+              />
+            </Campo>
+
+            {message && (
+              <p style={{ color: 'red', textAlign: 'center' }}>{message}</p>
+            )}
 
             <div>
               <AddToCartButton type="submit" disabled={loading}>
@@ -206,7 +265,6 @@ export default function AddProduct() {
               </AddToCartButton>
             </div>
           </ProductForm>
-          {message && <p>{message}</p>}
         </ProductCard>
       </Container>
       <Footer />

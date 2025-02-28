@@ -18,7 +18,8 @@ CREATE TABLE "produto" (
     "name" TEXT NOT NULL,
     "descricao" TEXT NOT NULL,
     "preco" REAL NOT NULL,
-    "quantidade" INTEGER NOT NULL
+    "quantidade" INTEGER NOT NULL,
+    "fotoPrincipal" TEXT NOT NULL
 );
 
 -- CreateTable
@@ -51,7 +52,28 @@ CREATE TABLE "carrinho_produto" (
 CREATE UNIQUE INDEX "users_email_key" ON "users"("email");
 
 -- CreateIndex
+CREATE INDEX "users_email_idx" ON "users"("email");
+
+-- CreateIndex
+CREATE INDEX "users_created_at_idx" ON "users"("created_at");
+
+-- CreateIndex
 CREATE UNIQUE INDEX "produto_name_key" ON "produto"("name");
 
 -- CreateIndex
+CREATE INDEX "produto_preco_idx" ON "produto"("preco");
+
+-- CreateIndex
+CREATE INDEX "produto_quantidade_idx" ON "produto"("quantidade");
+
+-- CreateIndex
+CREATE INDEX "imagem_idProduto_idx" ON "imagem"("idProduto");
+
+-- CreateIndex
 CREATE UNIQUE INDEX "carrinho_idUsuario_key" ON "carrinho"("idUsuario");
+
+-- CreateIndex
+CREATE INDEX "carrinho_idUsuario_idx" ON "carrinho"("idUsuario");
+
+-- CreateIndex
+CREATE INDEX "carrinho_produto_idCarrinho_idProduto_idx" ON "carrinho_produto"("idCarrinho", "idProduto");

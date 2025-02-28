@@ -15,16 +15,9 @@ import {
 
 interface HeaderProps {
   isLoggedIn: boolean
-  userName: string | null
-  toggleCart: () => void
-  Itens: number
-}
-
-interface HeaderProps {
-  isLoggedIn: boolean
   Admin: boolean
   userName: string | null
-  toggleCart: () => void
+  toggleCart?: () => void // Agora é opcional
   Itens: number
 }
 
@@ -39,7 +32,7 @@ export default function Header({
   const [isDropdownOpen, setIsDropdownOpen] = useState(false)
   let catalogo = true
 
-  if (Itens <= 0) {
+  if (Itens < 0) {
     catalogo = false
   }
 
@@ -50,6 +43,10 @@ export default function Header({
 
   const AdminPage = () => {
     router.push('/admin')
+  }
+
+  const PerfilPage = () => {
+    router.push('/perfil')
   }
 
   return (
@@ -68,6 +65,7 @@ export default function Header({
                 {Admin && (
                   <DropdownItem onClick={AdminPage}>Administração</DropdownItem>
                 )}
+                <DropdownItem onClick={PerfilPage}>Perfil</DropdownItem>
                 <DropdownItem onClick={handleLogout}>Sair</DropdownItem>
               </DropdownMenu>
             )}

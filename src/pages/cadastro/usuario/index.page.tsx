@@ -9,11 +9,13 @@ import {
   Container,
   Label,
   ProductCard,
-  SearchInput,
+  Input,
   ProductForm,
   Campo,
   CheckboxContainer,
   CheckboxInput,
+  Button,
+  CheckInput,
 } from './style'
 
 export default function AddProduct() {
@@ -24,6 +26,9 @@ export default function AddProduct() {
   const [nome, setNome] = useState('')
   const [email, setEmail] = useState('')
   const [senha, setSenha] = useState('')
+  const [telefone, setTelefone] = useState('')
+  const [nascimento, setNascimento] = useState('')
+  const [imagemBase64, setImagemBase64] = useState<string>('')
   const [admin, setAdmin] = useState(false)
   const [loading, setLoading] = useState(false)
   const [message, setMessage] = useState('')
@@ -55,15 +60,47 @@ export default function AddProduct() {
     }
   }, [router])
 
+  // Função para converter imagem em Base64 (somente uma)
+  const convertImageToBase64 = (file: File) => {
+    const reader = new FileReader()
+    reader.readAsDataURL(file)
+    reader.onloadend = () => {
+      setImagemBase64(reader.result as string)
+    }
+  }
+
+  const handleImageChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    if (event.target.files && event.target.files.length > 0) {
+      const file = event.target.files[0]
+      const fileType = file.type
+
+      if (fileType === 'image/jpeg' || fileType === 'image/png') {
+        convertImageToBase64(file)
+      } else {
+        alert('Por favor, selecione uma imagem nos formatos JPEG ou PNG.')
+        event.target.value = '' // Reseta o campo de input
+      }
+    } else {
+      console.log('Nenhum arquivo selecionado')
+    }
+  }
+
   // Validação e envio do formulário
   const handleSubmit = async (event: React.FormEvent) => {
     event.preventDefault()
     setLoading(true)
     setMessage('')
 
-    const usuarioData = { nome, email, senha, admin }
-
-    // Validar os dados antes de enviar
+    const usuarioData = {
+      name: nome,
+      email,
+      senha,
+      admin,
+      telefone,
+      imagemBase64,
+      nascimento,
+    }
+    console.log(usuarioData)
     const validacao = CadastroSchema.safeParse(usuarioData)
 
     if (!validacao.success) {
@@ -115,38 +152,60 @@ export default function AddProduct() {
         <ProductCard>
           <ProductForm onSubmit={handleSubmit}>
             <Campo>
-              <label htmlFor="nome">Nome:</label>
-              <SearchInput
+              <Label>Nome:</Label>
+              <Input
                 type="text"
-                id="nome"
+                placeholder="Digite seu nome"
                 value={nome}
                 onChange={(e) => setNome(e.target.value)}
-                required
               />
             </Campo>
-
             <Campo>
-              <label htmlFor="email">Email:</label>
-              <SearchInput
+              <Label>Email:</Label>
+              <Input
                 type="email"
-                id="email"
+                placeholder="Digite seu email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                required
               />
             </Campo>
-
             <Campo>
-              <label htmlFor="senha">Senha:</label>
-              <SearchInput
+              <Label>Telefone:</Label>
+              <Input
+                type="text"
+                placeholder="Digite seu Telefone"
+                value={telefone}
+                onChange={(e) => setTelefone(e.target.value)}
+              />
+            </Campo>
+            <Campo>
+              <Label>Data De Nascimento:</Label>
+              <Input
+                type="date"
+                placeholder="Digite sua data de nascimento"
+                value={nascimento}
+                onChange={(e) => setNascimento(e.target.value)}
+              />
+            </Campo>
+            <Campo>
+              <Label>Senha:</Label>
+              <Input
                 type="password"
-                id="senha"
+                placeholder="Digite sua senha"
                 value={senha}
                 onChange={(e) => setSenha(e.target.value)}
+              />
+            </Campo>
+            <Campo>
+              <label htmlFor="imagens">Imagem do Perfil:</label>
+              <CheckInput
+                type="file"
+                id="imagens"
+                accept="image/*"
+                onChange={handleImageChange}
                 required
               />
             </Campo>
-
             <CheckboxContainer>
               <CheckboxInput
                 type="checkbox"
@@ -155,14 +214,13 @@ export default function AddProduct() {
               />
               <Label>Admin</Label>
             </CheckboxContainer>
-
+            {message && <p>{message}</p>}
             <div>
               <AddToCartButton type="submit" disabled={loading}>
                 {loading ? 'Adicionando...' : 'Adicionar Usuário'}
               </AddToCartButton>
             </div>
           </ProductForm>
-          {message && <p>{message}</p>}
         </ProductCard>
       </Container>
       <Footer />

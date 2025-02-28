@@ -29,6 +29,7 @@ export interface Produto {
   descricao: string
   preco: number
   quantidade: number
+  fotoPrincipal: string
   imagens: { url: string }[]
 }
 
@@ -47,6 +48,7 @@ export default function Home() {
   const [selectedProduct, setSelectedProduct] = useState<Produto | null>(null)
   const [selectedQuantity, setSelectedQuantity] = useState(1)
   const [isLoggedIn, setIsLoggedIn] = useState(false)
+  const [userData, setUserData] = useState(null)
   const [userName, setUserName] = useState<string | null>(null)
   const [produtosCarrinho, setProdutosCarrinho] = useState<ProdutoCarrinho[]>(
     [],
@@ -172,6 +174,8 @@ export default function Home() {
         .toLowerCase()
         .includes(produtoPesquisa.toLowerCase()),
   )
+
+  console.log(tokenObject.current.admin)
 
   return (
     <>

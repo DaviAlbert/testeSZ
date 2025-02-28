@@ -14,7 +14,7 @@ export const Campo = styled('div', {
   width: '100%',
 })
 
-export const SearchInput = styled('input', {
+export const Input = styled('input', {
   width: '100%',
   maxWidth: 400,
   padding: '$2',
@@ -32,7 +32,7 @@ export const SearchInput = styled('input', {
 export const CheckInput = styled('input', {
   appearance: 'none',
   marginTop: '5px',
-  width: '50px',
+  width: '119px',
   height: '20',
   borderRadius: '$sm',
   border: '2px solid $gray500',
@@ -211,4 +211,22 @@ export const Label = styled('label', {
   marginTop: '4px',
   fontWeight: 'bold',
   color: '$gray100',
+})
+
+export const Button = styled('button', {
+  textAlign: 'center',
+  padding: '$3',
+  width: '100%',
+  border: 'none',
+  borderRadius: '$sm',
+  fontSize: '$md',
+  backgroundColor: '$ignite500',
+  color: '$white',
+  marginTop: '$2',
+  cursor: 'pointer',
+  transition: 'background 0.2s',
+
+  '&:hover': {
+    backgroundColor: '$ignite300',
+  },
 })

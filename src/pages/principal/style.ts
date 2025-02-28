@@ -1,4 +1,5 @@
 import { styled } from '@ignite-ui/react'
+import { motion } from 'framer-motion'
 
 export const Container = styled('div', {
   display: 'flex',
@@ -77,32 +78,81 @@ export const AddToCartButton = styled('button', {
   },
 })
 
-export const Carrinho = styled('div', {
-  backgroundColor: '$gray900',
+export const Backdrop = styled('div', {
   position: 'fixed',
-  width: '25%',
-  height: '75%',
-  right: '0',
-  borderRadius: '5px 0px 0px 5px',
+  top: 0,
+  left: 0,
+  width: '100%',
+  height: '100%',
+  background: 'rgba(0, 0, 0, 0.5)',
+  zIndex: 9,
+})
+
+export const CarrinhoContainer = styled('div', {
+  background: '$gray800',
+  position: 'fixed',
+  top: 0,
+  right: 0,
+  width: '350px',
+  height: '100vh',
+  padding: '20px',
+  boxShadow: '-2px 0px 10px rgba(0, 0, 0, 0.1)',
+  zIndex: 10,
+  overflowY: 'auto',
   display: 'flex',
   flexDirection: 'column',
-  alignItems: 'center',
-  marginTop: '10px',
+})
 
-  '&:hover': {
-    width: '30%',
-  },
+export const Fechar = styled('button', {
+  fontSize: '24px',
+  background: 'none',
+  border: 'none',
+  cursor: 'pointer',
+  position: 'absolute',
+  top: '10px',
+  right: '15px',
 })
 
 export const Produto = styled('div', {
-  backgroundColor: '$gray700',
   display: 'flex',
-  width: '90%',
+  alignItems: 'center',
+  marginBottom: '15px',
+  borderBottom: '1px solid #ddd',
+  paddingBottom: '10px',
+
+  '& img': {
+    width: '50px',
+    height: '50px',
+    objectFit: 'cover',
+    marginRight: '10px',
+  },
+
+  '& div': {
+    flexGrow: 1,
+  },
+
+  '& button': {
+    background: 'none',
+    border: 'none',
+    fontSize: '18px',
+    cursor: 'pointer',
+  },
+})
+
+export const FinalizarCompra = styled('button', {
+  width: '100%',
   padding: '10px',
-  borderRadius: '8px',
-  margin: '10px',
-  textAlign: 'justify',
-  justifyContent: 'space-between',
+  background: 'green',
+  color: 'white',
+  border: 'none',
+  fontSize: '16px',
+  cursor: 'pointer',
+  marginTop: '10px',
+  borderRadius: '5px',
+
+  '&:hover': {
+    background: 'darkgreen',
+  },
 })
 
 export const Quantidade = styled('input', {
@@ -129,7 +179,7 @@ export const ModalOverlay = styled('div', {
 })
 
 export const Modal = styled('div', {
-  background: 'white',
+  background: '$gray800',
   padding: '20px',
   borderRadius: '8px',
   width: '300px',

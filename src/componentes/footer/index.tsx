@@ -1,6 +1,7 @@
 import { FooterContainer, Copyright, Address, LogoFooter } from './style'
 import logo from '../../../assets/logo.png'
 
+// função principal do header
 export default function Footer() {
   return (
     <FooterContainer>

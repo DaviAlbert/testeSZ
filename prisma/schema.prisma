@@ -8,53 +8,61 @@ datasource db {
 }
 
 model User {
-  id        String    @id @default(uuid())
-  email     String    @unique
-  name      String
-  password  String
-  admin     Boolean
+  id         String    @id @default(uuid())
+  email      String    @unique
+  name       String
+  password   String
+  admin      Boolean
   foto       String 
-  telefone String
+  telefone   String
   Nascimento DateTime
   created_at DateTime @default(now())
   updated_at DateTime @updatedAt
 
-  carrinho  Carrinho?
+  carrinho   Carrinho?
 
   @@map("users")
+  @@index([email])
+  @@index([created_at])
 }
 
 model Produto {
-  id          String    @id @default(uuid())
-  name        String    @unique
-  descricao   String
-  preco       Float
-  quantidade  Int
+  id            String    @id @default(uuid())
+  name          String    @unique
+  descricao     String
+  preco         Float
+  quantidade    Int
+  fotoPrincipal String    // Apenas 1 imagem principal (URL)
 
-  imagens     Imagem[] 
-  carrinhos   CarrinhoProduto[]
+  imagens       Imagem[] @relation("ProdutoImagens") // Permitir array vazio ou nulo
+  carrinhos     CarrinhoProduto[]
 
   @@map("produto")
+  @@index([preco])
+  @@index([quantidade])
 }
 
-model Imagem {
-  id        String   @id @default(uuid())
-  url       String   
-  idProduto String   
 
-  produto   Produto  @relation(fields: [idProduto], references: [id], onDelete: Cascade)
+model Imagem {
+  id         String   @id @default(uuid())
+  url        String   
+  idProduto  String   
+
+  produto    Produto  @relation("ProdutoImagens", fields: [idProduto], references: [id], onDelete: Cascade)
 
   @@map("imagem")
+  @@index([idProduto])
 }
 
 model Carrinho {
-  id          String     @id @default(uuid())
-  idUsuario   String     @unique
+  id         String     @id @default(uuid())
+  idUsuario  String     @unique
 
-  user        User       @relation(fields: [idUsuario], references: [id])
-  produtos    CarrinhoProduto[]
+  user       User       @relation(fields: [idUsuario], references: [id])
+  produtos   CarrinhoProduto[]
 
   @@map("carrinho")
+  @@index([idUsuario])
 }
 
 model CarrinhoProduto {
@@ -67,4 +75,5 @@ model CarrinhoProduto {
 
   @@id([idCarrinho, idProduto])
   @@map("carrinho_produto")
+  @@index([idCarrinho, idProduto])
 }

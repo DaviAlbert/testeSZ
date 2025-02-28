@@ -5,6 +5,7 @@ import { Container, Title, InfoCard, Grid, Button } from './style'
 import Header from '../../componentes/header'
 import { TokenSchema } from '../../componentes/schema/schemas'
 
+// função principal da página de administrador
 export default function AdminDashboard() {
   const [isAdmin, setIsAdmin] = useState(false)
   const [userCount, setUserCount] = useState<number | null>(null)
@@ -16,6 +17,7 @@ export default function AdminDashboard() {
   )
   const router = useRouter()
 
+  // verificação se o usuário está cadastrado e se ele é um administrador
   useEffect(() => {
     const tokenFromCookie = Cookies.get('authToken')
     if (tokenFromCookie) {
@@ -36,6 +38,7 @@ export default function AdminDashboard() {
     }
   }, [router])
 
+  // vefica o número de produtos e usuários cadastrados no banco de dados.
   useEffect(() => {
     if (isAdmin) {
       fetch('/api/admin/stats')
@@ -47,35 +50,6 @@ export default function AdminDashboard() {
         .catch((error) => console.error('Erro ao buscar dados:', error))
     }
   }, [isAdmin])
-
-  useEffect(() => {
-    const tokenFromCookie = Cookies.get('authToken')
-
-    if (tokenFromCookie) {
-      try {
-        const decodedToken = JSON.parse(decodeURIComponent(tokenFromCookie))
-        const parsedToken = TokenSchema.safeParse(decodedToken)
-
-        if (parsedToken.success) {
-          tokenObject.current = parsedToken.data
-          setIsLoggedIn(true)
-          setUserName(parsedToken.data.name || 'Usuário')
-        } else {
-          console.error('Token inválido:', parsedToken.error)
-          router.push('/')
-        }
-      } catch (error) {
-        console.error('Erro ao decodificar o token:', error)
-        router.push('/')
-      }
-    } else {
-      router.push('/')
-    }
-  }, [])
-
-  if (!isAdmin) {
-    return <p>Carregando...</p>
-  }
 
   return (
     <>

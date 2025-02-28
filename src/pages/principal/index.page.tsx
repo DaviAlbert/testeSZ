@@ -10,13 +10,15 @@ import {
   ProductImage,
   ProductList,
   Item,
-  Carrinho,
-  Produto,
   Modal,
   ModalContent,
   ModalOverlay,
   Quantidade,
   Titulo,
+  FinalizarCompra,
+  CarrinhoContainer,
+  Fechar,
+  Backdrop,
 } from './style'
 import Header from '../../componentes/header'
 import Footer from '../../componentes/footer'
@@ -28,6 +30,7 @@ export interface Produto {
   descricao: string
   preco: number
   quantidade: number
+  fotoPrincipal: string
   imagens: { url: string }[]
 }
 
@@ -45,6 +48,7 @@ export default function Home() {
   const [selectedProduct, setSelectedProduct] = useState<Produto | null>(null)
   const [selectedQuantity, setSelectedQuantity] = useState(1)
   const [isLoggedIn, setIsLoggedIn] = useState(false)
+  const [admin, setAdmin] = useState(false)
   const [userName, setUserName] = useState<string | null>(null)
   const [produtosCarrinho, setProdutosCarrinho] = useState<ProdutoCarrinho[]>(
     [],
@@ -56,18 +60,16 @@ export default function Home() {
 
   useEffect(() => {
     const tokenFromCookie = Cookies.get('authToken')
-    console.log(isLoggedIn)
 
     if (tokenFromCookie) {
       try {
         const decodedToken = JSON.parse(decodeURIComponent(tokenFromCookie))
-        console.log(decodedToken)
         const parsedToken = TokenSchema.safeParse(decodedToken)
-        console.log(decodedToken)
 
         if (parsedToken.success) {
           tokenObject.current = parsedToken.data
           setIsLoggedIn(true)
+          setAdmin(true)
           setUserName(parsedToken.data.name || 'Usuário')
         } else {
           console.error('Token inválido:', parsedToken.error)
@@ -191,6 +193,7 @@ export default function Home() {
         userName={userName}
         toggleCart={toggleCart}
         Itens={produtosCarrinho.length}
+        Admin={admin}
       />
 
       <Titulo>Ofertas especiais:</Titulo>
@@ -201,13 +204,11 @@ export default function Home() {
               <Item onClick={() => handleClickProduto(produto.id)}>
                 {produto.name}
               </Item>
-              {produto.imagens.length > 0 && (
-                <ProductImage
-                  src={produto.imagens[0].url}
-                  alt={produto.name}
-                  onClick={() => handleClickProduto(produto.id)}
-                />
-              )}
+              <ProductImage
+                src={produto.fotoPrincipal}
+                alt={produto.name}
+                onClick={() => handleClickProduto(produto.id)}
+              />
               <div onClick={() => handleClickProduto(produto.id)}>
                 <Item>{produto.descricao}</Item>
                 <Item>
@@ -231,13 +232,11 @@ export default function Home() {
               <Item onClick={() => handleClickProduto(produto.id)}>
                 {produto.name}
               </Item>
-              {produto.imagens.length > 0 && (
-                <ProductImage
-                  src={produto.imagens[0].url}
-                  alt={produto.name}
-                  onClick={() => handleClickProduto(produto.id)}
-                />
-              )}
+              <ProductImage
+                src={produto.fotoPrincipal}
+                alt={produto.name}
+                onClick={() => handleClickProduto(produto.id)}
+              />
               <div onClick={() => handleClickProduto(produto.id)}>
                 <Item>{produto.descricao}</Item>
                 <Item>
@@ -254,28 +253,31 @@ export default function Home() {
       </Container>
 
       {isCartOpen && (
-        <FadeIn>
-          <Carrinho>
+        <>
+          <Backdrop onClick={toggleCart} />
+          <CarrinhoContainer>
+            <Fechar onClick={toggleCart}>✖</Fechar>
+
             {produtosCarrinho.length > 0 ? (
               produtosCarrinho.map((produto, index) => (
                 <Produto key={index}>
-                  <h2 style={{ color: '$gray200', margin: 'auto 0px' }}>
-                    {produto.name}
-                  </h2>
-                  <p style={{ margin: 'auto 0px' }}>
-                    R$ {produto.preco.toFixed(2).replace('.', ',')}
-                  </p>
-                  <p style={{ margin: 'auto 0px' }}>
-                    Quantidade: {produto.quantidade}
-                  </p>
+                  <div>
+                    <h3 style={{ color: '#fff', marginBottom: '5px' }}>
+                      {produto.name}
+                    </h3>
+                    <p>R$ {produto.preco.toFixed(2).replace('.', ',')}</p>
+                    <p>Qtd: {produto.quantidade}</p>
+                  </div>
+                  <button>🗑️</button>
                 </Produto>
               ))
             ) : (
               <p>Seu carrinho está vazio.</p>
             )}
-            <AddToCartButton>Comprar</AddToCartButton>
-          </Carrinho>
-        </FadeIn>
+
+            <FinalizarCompra>Finalizar Compra</FinalizarCompra>
+          </CarrinhoContainer>
+        </>
       )}
 
       {modalVisible && selectedProduct && (

@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import Cookies from 'js-cookie'
 import { useRouter } from 'next/router'
-import { CadastroSchema } from '../../componentes/schema/schemas' // Importando o schema de validação
+import { CadastroSchema } from '../../componentes/schema/schemas'
 import {
   Container,
   Campo,
@@ -9,8 +9,6 @@ import {
   Input,
   Button,
   Button1,
-  CheckboxContainer,
-  CheckboxInput,
   CheckInput,
 } from './style'
 
@@ -20,11 +18,11 @@ export default function Cadastro() {
   const [senha, setSenha] = useState('')
   const [telefone, setTelefone] = useState('')
   const [nascimento, setNascimento] = useState('')
-  const [admin, setAdmin] = useState(false)
   const [imagemBase64, setImagemBase64] = useState<string>('')
+  const [message, setMessage] = useState('') // Única mensagem de erro
   const router = useRouter()
 
-  // Função para converter imagem em Base64 (somente uma)
+  // Função para converter imagem em Base64
   const convertImageToBase64 = (file: File) => {
     const reader = new FileReader()
     reader.readAsDataURL(file)
@@ -51,32 +49,25 @@ export default function Cadastro() {
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
-
-    if (!nascimento.trim()) {
-      alert('A data de nascimento é obrigatória!')
-      return
-    }
-
-    if (!imagemBase64) {
-      alert('Por favor, adicione uma imagem válida!')
-      return
-    }
+    setMessage('') // Resetando mensagem de erro
 
     const formData = {
       name,
       email,
       senha,
-      admin,
-      telefone: telefone || '',
-      nascimento: nascimento || '',
-      imagemBase64: imagemBase64 || '',
+      admin: false,
+      telefone,
+      nascimento,
+      imagemBase64,
     }
 
     const validacao = CadastroSchema.safeParse(formData)
 
     if (!validacao.success) {
-      console.error('Erro na validação:', validacao.error)
-      alert('Erro nos dados de cadastro. Verifique os campos.')
+      const firstError =
+        validacao.error.errors[0]?.message ||
+        'Erro nos dados. Verifique as informações e tente novamente.'
+      setMessage(firstError)
       return
     }
 
@@ -108,9 +99,10 @@ export default function Cadastro() {
           router.push('/')
         }, 100)
       } else {
-        console.log('Erro na resposta do servidor', response)
+        setMessage('Erro ao cadastrar. Tente novamente mais tarde.')
       }
     } catch (error) {
+      setMessage('Erro ao conectar com o servidor. Tente novamente.')
       console.log(`Erro ao conectar com o servidor: ${error}`)
     }
   }
@@ -149,7 +141,6 @@ export default function Cadastro() {
           <Label>Data De Nascimento:</Label>
           <Input
             type="date"
-            placeholder="Digite sua data de nascimento"
             value={nascimento}
             onChange={(e) => setNascimento(e.target.value)}
           />
@@ -173,14 +164,10 @@ export default function Cadastro() {
             required
           />
         </Campo>
-        <CheckboxContainer>
-          <CheckboxInput
-            type="checkbox"
-            checked={admin}
-            onChange={(e) => setAdmin(e.target.checked)}
-          />
-          <Label>Admin</Label>
-        </CheckboxContainer>
+        {message && (
+          <p style={{ color: 'red', textAlign: 'center' }}>{message}</p>
+        )}
+
         <Button type="submit">Cadastrar</Button>
       </form>
       <Button1 onClick={() => router.push('/auth')}>Ir para Login</Button1>

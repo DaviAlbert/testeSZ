@@ -1,77 +1,72 @@
-import { GetServerSideProps } from 'next'
-import prisma from '../../lib/prisma'
-import { Produto } from '../catalogo/index.page'
-import { Container, Image, Button, Input, TextArea } from './style'
-import React, { useEffect, useState } from 'react'
-import Slider from 'react-slick'
-import Cookies from 'js-cookie'
+import { useEffect, useState } from 'react'
 import { useRouter } from 'next/router'
+import Cookies from 'js-cookie'
+import Slider from 'react-slick'
+import { Container, Image, Button, Input, TextArea } from './style'
+import 'slick-carousel/slick/slick.css'
+import 'slick-carousel/slick/slick-theme.css'
 
-interface ProdutoDetalhadoProps {
-  produto: Produto
+// Define a estrutura esperada do produto detalhado
+interface Produto {
+  id: string
+  name: string
+  descricao: string
+  preco: number
+  quantidade: number
+  fotoPrincipal: string
+  imagens: { id: string; url: string }[]
 }
 
-export const getServerSideProps: GetServerSideProps = async (context) => {
-  const { id } = context.params as { id: string }
-
-  const produto = await prisma.produto.findUnique({
-    where: { id },
-    include: {
-      imagens: true,
-    },
-  })
-
-  if (!produto) {
-    return { notFound: true }
-  }
-
-  return {
-    props: { produto },
-  }
-}
-
-export default function ProdutoDetalhado({ produto }: ProdutoDetalhadoProps) {
+export default function ProdutoDetalhado() {
+  const router = useRouter()
+  const { id } = router.query
+  const [produto, setProduto] = useState<Produto | null>(null)
   const [isAdmin, setIsAdmin] = useState(false)
   const [editando, setEditando] = useState(false)
-  const [nome, setNome] = useState(produto.name)
-  const [descricao, setDescricao] = useState(produto.descricao)
-  const [preco, setPreco] = useState(produto.preco)
-  const router = useRouter()
+  const [name, setName] = useState('')
+  const [descricao, setDescricao] = useState('')
+  const [preco, setPreco] = useState(0)
 
+  // Buscar produto via API ao carregar a página
+  useEffect(() => {
+    if (!id) return
+
+    const fetchProduto = async () => {
+      try {
+        const response = await fetch(`/api/procurarProdutos/${id}`)
+        if (!response.ok) throw new Error('Produto não encontrado')
+        const data: Produto = await response.json()
+        setProduto(data)
+        setName(data.name)
+        setDescricao(data.descricao)
+        setPreco(data.preco)
+      } catch (error) {
+        console.error(error)
+        alert('Erro ao buscar produto')
+      }
+    }
+
+    fetchProduto()
+  }, [id])
+
+  // Verificação de admin
   useEffect(() => {
     const userCookie = Cookies.get('authToken')
     if (userCookie) {
       const user = JSON.parse(userCookie)
-      setIsAdmin(user.admin) // Verifica se o usuário é admin
+      setIsAdmin(user.admin)
+    } else {
+      alert('Token não encontrado, faça login.')
+      router.push('/login')
     }
   }, [])
 
-  // Função para editar o produto
-  const handleEdit = async () => {
-    try {
-      const response = await fetch(`/api/editarProduto/${produto.id}`, {
-        method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ name: nome, descricao, preco }),
-      })
-
-      if (response.ok) {
-        alert('Produto atualizado com sucesso!')
-        setEditando(false)
-      } else {
-        alert('Erro ao atualizar o produto.')
-      }
-    } catch (error) {
-      console.error('Erro ao atualizar o produto:', error)
-    }
-  }
-
-  // Função para deletar o produto
+  // Função para deletar um produto
   const handleDelete = async () => {
     if (!confirm('Tem certeza que deseja excluir este produto?')) return
 
     try {
-      const response = await fetch(`/api/deletarProduto/${produto.id}`, {
+      const response = await fetch(`/api/deletarProduto/${produto?.id}`, {
         method: 'DELETE',
       })
 
@@ -86,13 +81,33 @@ export default function ProdutoDetalhado({ produto }: ProdutoDetalhadoProps) {
     }
   }
 
+  // Configuração do Slider
+  const settings = {
+    dots: true,
+    infinite: true,
+    speed: 500,
+    slidesToShow: 1,
+    slidesToScroll: 1,
+    adaptiveHeight: true,
+  }
+
+  if (!produto) return <p>Carregando...</p>
+
   return (
     <Container>
       <h1>{produto.name}</h1>
-      <div style={{ width: '30%', minWidth: '200px' }}>
-        <Slider dots infinite speed={500} slidesToShow={1} slidesToScroll={1}>
-          {produto.imagens.map((imagem, index) => (
-            <div key={index}>
+
+      {/* Slider com imagens */}
+      <div style={{ width: '50%', minWidth: '300px', margin: 'auto' }}>
+        <Slider {...settings}>
+          <div>
+            <Image
+              src={produto.fotoPrincipal}
+              alt={`Imagem principal de ${produto.name}`}
+            />
+          </div>
+          {produto.imagens.map((imagem) => (
+            <div key={imagem.id}>
               <Image src={imagem.url} alt={produto.name} />
             </div>
           ))}
@@ -101,16 +116,23 @@ export default function ProdutoDetalhado({ produto }: ProdutoDetalhadoProps) {
 
       {!editando ? (
         <>
-          <p>{produto.descricao}</p>
-          <p>Preço: R$ {produto.preco}</p>
+          <p>
+            <strong>Descrição:</strong> {produto.descricao}
+          </p>
+          <p>
+            <strong>Preço:</strong> R$ {produto.preco.toFixed(2)}
+          </p>
+          <p>
+            <strong>Quantidade disponível:</strong> {produto.quantidade}
+          </p>
         </>
       ) : (
         <>
           <Input
             type="text"
-            value={nome}
-            onChange={(e) => setNome(e.target.value)}
-            placeholder="Nome"
+            value={name}
+            onChange={(e) => setName(e.target.value)}
+            placeholder="Name"
           />
           <TextArea
             value={descricao}
@@ -120,13 +142,12 @@ export default function ProdutoDetalhado({ produto }: ProdutoDetalhadoProps) {
           <Input
             type="number"
             value={preco}
-            onChange={(e) => setPreco(e.target.value)}
+            onChange={(e) => setPreco(Number(e.target.value))}
             placeholder="Preço"
           />
         </>
       )}
 
-      {/* Exibir botões apenas para administradores */}
       {isAdmin && (
         <div>
           {!editando ? (
@@ -138,9 +159,6 @@ export default function ProdutoDetalhado({ produto }: ProdutoDetalhadoProps) {
             </>
           ) : (
             <>
-              <Button onClick={handleEdit} style={{ background: 'green' }}>
-                Salvar Alterações
-              </Button>
               <Button
                 onClick={() => setEditando(false)}
                 style={{ background: 'gray' }}
