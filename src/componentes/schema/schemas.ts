@@ -4,6 +4,7 @@ import { z } from 'zod'
 const base64Regex =
   /^data:image\/(png|jpeg|jpg|gif|webp);base64,[A-Za-z0-9+/]+={0,2}$/
 
+
 const imageSchema = z.object({
   url: z
     .string()
@@ -12,9 +13,8 @@ const imageSchema = z.object({
     }),
 })
 
-// ✅ Validação para cadastro de Produto
+// Validação para cadastro de Produto no banco de dados
 export const ProdutoSchema = z.object({
-  id: z.string().optional(),
   name: z.string().min(1, 'O nome do produto é obrigatório'),
   descricao: z.string().min(5, 'A descrição deve ter pelo menos 5 caracteres'),
   preco: z.number().min(0.01, 'O preço deve ser maior que zero'),
@@ -22,13 +22,12 @@ export const ProdutoSchema = z.object({
 
   fotoPrincipal: z
     .string()
-    .refine((val) => val.startsWith('http') || base64Regex.test(val), {
-      message: 'A foto principal deve ser uma URL válida ou um Base64 válido',
-    }),
+    .optional() 
+    .or(z.literal('')) 
+    ,
 
-  fotosOpcionais: z
-    .array(imageSchema)
-    .max(3, 'Máximo de 3 fotos opcionais')
+    fotosOpcionais: z.array(z.string())
+    .max(3, "Máximo de 3 fotos opcionais")
     .optional(),
 })
 
@@ -43,7 +42,7 @@ export const ProdutoCarrinhoSchema = z.object({
 export const TokenSchema = z.object({
   admin: z.boolean(),
   id: z.string(),
-  name: z.string().optional(),
+  name: z.string(),
   email: z.string().email('E-mail inválido').optional(),
   telefone: z.string().optional(),
   nascimento: z.string().optional(),

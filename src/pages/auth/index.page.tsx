@@ -30,7 +30,6 @@ export default function Login() {
         },
         body: JSON.stringify(validacao.data), // Enviando os dados já validados
       })
-
       if (response.ok) {
         const data = await response.json()
 
@@ -39,8 +38,6 @@ export default function Login() {
           expires: 1,
           path: '/',
         })
-
-        console.log('Cookie salvo:', Cookies.get('authToken'))
 
         setMessage(`Login bem-sucedido! Bem-vindo, ${data.user.name}`)
 

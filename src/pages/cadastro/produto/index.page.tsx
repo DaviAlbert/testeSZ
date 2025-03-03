@@ -23,11 +23,7 @@ export default function AddProduct() {
   const [descricao, setDescricao] = useState('')
   const [quantidade, setQuantidade] = useState(1)
   const [preco, setPreco] = useState('')
-  const [fotoPrincipal, setFotoPrincipal] = useState<File | null>(null)
-  const [fotoPrincipalBase64, setFotoPrincipalBase64] = useState<string | null>(
-    null,
-  )
-  const [fotosOpcionais, setFotosOpcionais] = useState<File[]>([])
+  const [fotoPrincipalBase64, setFotoPrincipalBase64] = useState<string | null>(null)
   const [fotosOpcionaisBase64, setFotosOpcionaisBase64] = useState<string[]>([])
   const [loading, setLoading] = useState(false)
   const [message, setMessage] = useState('')
@@ -54,26 +50,61 @@ export default function AddProduct() {
     }
   }, [router])
 
-  // Função para converter imagem para Base64
-  const convertToBase64 = (file: File): Promise<string> => {
+  // Função para reduzir e converter imagem para Base64
+  const resizeAndConvertToBase64 = (file: File): Promise<string> => {
     return new Promise((resolve, reject) => {
       const reader = new FileReader()
       reader.readAsDataURL(file)
-      reader.onload = () => resolve(reader.result as string)
+      reader.onload = (event) => {
+        const img = new Image()
+        img.src = event.target?.result as string
+
+        img.onload = () => {
+          const canvas = document.createElement('canvas')
+          const ctx = canvas.getContext('2d')
+
+          if (!ctx) return reject(new Error('Erro ao processar imagem.'))
+
+          const maxWidth = 800
+          const maxHeight = 800
+
+          let width = img.width
+          let height = img.height
+
+          if (width > maxWidth || height > maxHeight) {
+            if (width > height) {
+              height *= maxWidth / width
+              width = maxWidth
+            } else {
+              width *= maxHeight / height
+              height = maxHeight
+            }
+          }
+
+          canvas.width = width
+          canvas.height = height
+          ctx.drawImage(img, 0, 0, width, height)
+
+          // Comprime e converte para Base64
+          resolve(canvas.toDataURL('image/jpeg', 0.7)) // Qualidade 70%
+        }
+      }
       reader.onerror = (error) => reject(error)
     })
   }
 
   // Foto principal
-  const handleFotoPrincipalChange = async (
-    event: React.ChangeEvent<HTMLInputElement>,
-  ) => {
+  const handleFotoPrincipalChange = async (event: React.ChangeEvent<HTMLInputElement>) => {
     if (event.target.files && event.target.files.length > 0) {
       const file = event.target.files[0]
-      setFotoPrincipal(file)
+
+      if (file.size > 5000000) { // 5MB limite
+        setMessage('A imagem é muito grande! Escolha uma menor que 5MB.')
+        return
+      }
 
       try {
-        const base64 = await convertToBase64(file)
+        const base64 = await resizeAndConvertToBase64(file)
         setFotoPrincipalBase64(base64)
       } catch (error) {
         console.error('Erro ao converter imagem para Base64:', error)
@@ -82,13 +113,11 @@ export default function AddProduct() {
   }
 
   // Fotos opcionais
-  const handleFotosOpcionaisChange = async (
-    event: React.ChangeEvent<HTMLInputElement>,
-  ) => {
+  const handleFotosOpcionaisChange = async (event: React.ChangeEvent<HTMLInputElement>) => {
     if (event.target.files) {
       const fileArray = Array.from(event.target.files)
 
-      if (fileArray.length + fotosOpcionais.length > 3) {
+      if (fileArray.length + fotosOpcionaisBase64.length > 3) {
         setMessage('Você pode adicionar no máximo 3 fotos opcionais.')
         return
       }
@@ -96,10 +125,7 @@ export default function AddProduct() {
       setMessage('')
 
       try {
-        const base64Images = await Promise.all(
-          fileArray.map((file) => convertToBase64(file)),
-        )
-        setFotosOpcionais([...fotosOpcionais, ...fileArray])
+        const base64Images = await Promise.all(fileArray.map((file) => resizeAndConvertToBase64(file)))
         setFotosOpcionaisBase64([...fotosOpcionaisBase64, ...base64Images])
       } catch (error) {
         console.error('Erro ao converter imagens opcionais para Base64:', error)
@@ -119,28 +145,21 @@ export default function AddProduct() {
       return
     }
 
-    const imagensArray = [
-      { url: fotoPrincipalBase64 },
-      ...fotosOpcionaisBase64.map((foto) => ({ url: foto })),
-    ]
-
     const produtoData = {
       name,
       descricao,
       quantidade: Number(quantidade),
       preco: parseFloat(preco),
       fotoPrincipal: fotoPrincipalBase64,
-      fotosOpcionais: fotosOpcionaisBase64.map((foto) => ({ url: foto })),
+      fotosOpcionais: fotosOpcionaisBase64,
     }
+    console.log(produtoData)
 
     const validacao = ProdutoSchema.safeParse(produtoData)
-
     console.log(validacao)
+
     if (!validacao.success) {
-      setMessage(
-        validacao.error.errors[0]?.message ||
-          'Erro nos dados do produto. Verifique os campos.',
-      )
+      setMessage(validacao.error.errors[0]?.message || 'Erro nos dados do produto.')
       setLoading(false)
       return
     }
@@ -158,14 +177,11 @@ export default function AddProduct() {
         setDescricao('')
         setQuantidade(1)
         setPreco('')
-        setFotoPrincipal(null)
         setFotoPrincipalBase64(null)
-        setFotosOpcionais([])
         setFotosOpcionaisBase64([])
         setTimeout(() => router.push('/catalogo'), 1000)
       } else {
         const errorData = await response.json()
-        setMessage(`Erro: ${errorData.error || 'Erro desconhecido'}`)
       }
     } catch (error) {
       setMessage('Erro ao conectar com o servidor. Tente novamente.')

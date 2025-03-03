@@ -98,7 +98,7 @@ export const CheckboxInput = styled('input', {
 export const CheckInput = styled('input', {
   appearance: 'none',
   marginTop: '5px',
-  width: '119px',
+  width: '116px',
   height: '20',
   borderRadius: '$sm',
   border: '2px solid $gray500',

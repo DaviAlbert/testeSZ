@@ -17,7 +17,7 @@ interface HeaderProps {
   isLoggedIn: boolean
   Admin: boolean
   userName: string | null
-  toggleCart?: () => void // Agora é opcional
+  toggleCart?: () => void
   Itens: number
 }
 
@@ -76,7 +76,7 @@ export default function Header({
 
         {isLoggedIn && catalogo && (
           <CartIconContainer onClick={toggleCart}>
-            <FaShoppingCart size={24} />
+            <FaShoppingCart size={36} />
             <CartBadge>{Itens}</CartBadge>
           </CartIconContainer>
         )}

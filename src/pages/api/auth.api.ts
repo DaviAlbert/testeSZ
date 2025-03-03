@@ -1,5 +1,6 @@
 import { NextApiRequest, NextApiResponse } from 'next'
 import { PrismaClient } from '@prisma/client'
+import bcrypt from 'bcrypt'
 
 const prisma = new PrismaClient()
 
@@ -19,16 +20,16 @@ export default async function handler(
 
   try {
     const user = await prisma.user.findUnique({
-      where: {
-        email,
-      },
+      where: { email },
     })
 
     if (!user) {
       return res.status(404).json({ error: 'Usuário não encontrado' })
     }
 
-    if (senha !== user.password) {
+    const isPasswordValid = await bcrypt.compare(senha, user.password)
+
+    if (!isPasswordValid) {
       return res.status(401).json({ error: 'Senha incorreta' })
     }
 
@@ -42,8 +43,6 @@ export default async function handler(
       },
     })
   } catch (error) {
-    return res
-      .status(500)
-      .json({ error: 'Erro ao processar login', details: error })
+    return res.status(500).json({ error: 'Erro ao processar login', details: error })
   }
 }

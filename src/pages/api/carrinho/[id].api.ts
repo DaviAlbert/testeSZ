@@ -24,6 +24,7 @@ export default async function handler(
       if (carrinho) {
         // Retorna os produtos e suas quantidades para o carrinho
         const produtosCarrinho = carrinho.produtos.map((item) => ({
+          id: item.produto.id,
           name: item.produto.name,
           quantidade: item.quantidade,
           preco: item.produto.preco,

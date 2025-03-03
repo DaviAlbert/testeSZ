@@ -8,18 +8,33 @@ export const Container = styled('div', {
   borderRadius: '8px',
   boxShadow: '0 4px 6px rgba(0, 0, 0, 0.1)',
   textAlign: 'center',
+
+  '@media (max-width: 820px)': {
+    margin: '30px auto',
+    padding: '15px',
+    maxWidth: '90%',
+  },
 })
 
 export const Title = styled('h1', {
   fontSize: '24px',
   color: '$gray100',
   marginBottom: '20px',
+
+  '@media (max-width: 600px)': {
+    fontSize: '20px',
+  },
 })
 
 export const Grid = styled('div', {
   display: 'flex',
   justifyContent: 'space-around',
   marginTop: '20px',
+
+  '@media (max-width: 600px)': {
+    flexDirection: 'column',
+    alignItems: 'center',
+  },
 })
 
 export const InfoCard = styled('div', {
@@ -40,6 +55,16 @@ export const InfoCard = styled('div', {
     fontWeight: 'bold',
     color: '$ignite500',
   },
+
+  '@media (max-width: 600px)': {
+    width: '80%',
+    marginBottom: '15px',
+  },
+
+  '@media (max-width: 400px)': {
+    width: '100%',
+    padding: '15px',
+  },
 })
 
 export const RefreshButton = styled('button', {
@@ -56,6 +81,11 @@ export const RefreshButton = styled('button', {
   '&:hover': {
     backgroundColor: '$ignite300',
   },
+
+  '@media (max-width: 400px)': {
+    width: '100%',
+    padding: '10px',
+  },
 })
 
 export const Button = styled('button', {
@@ -71,5 +101,15 @@ export const Button = styled('button', {
 
   '&:hover': {
     backgroundColor: '$ignite300',
+  },
+
+  '@media (max-width: 600px)': {
+    padding: '12px 20px',
+    fontSize: '14px',
+  },
+
+  '@media (max-width: 400px)': {
+    width: '100%',
+    marginTop: '20px',
   },
 })

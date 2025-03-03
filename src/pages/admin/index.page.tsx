@@ -1,9 +1,8 @@
-import { useState, useEffect, useRef } from 'react'
+import { useState, useEffect } from 'react'
 import { useRouter } from 'next/router'
 import Cookies from 'js-cookie'
 import { Container, Title, InfoCard, Grid, Button } from './style'
 import Header from '../../componentes/header'
-import { TokenSchema } from '../../componentes/schema/schemas'
 
 // função principal da página de administrador
 export default function AdminDashboard() {
@@ -12,9 +11,6 @@ export default function AdminDashboard() {
   const [productCount, setProductCount] = useState<number | null>(null)
   const [isLoggedIn, setIsLoggedIn] = useState(false)
   const [userName, setUserName] = useState<string | null>(null)
-  const tokenObject = useRef<{ admin?: boolean; id?: string; name?: string }>(
-    {},
-  )
   const router = useRouter()
 
   // verificação se o usuário está cadastrado e se ele é um administrador
@@ -23,7 +19,7 @@ export default function AdminDashboard() {
     if (tokenFromCookie) {
       try {
         const tokenObject = JSON.parse(decodeURIComponent(tokenFromCookie))
-
+        setIsLoggedIn(true)
         if (tokenObject.admin) {
           setIsAdmin(true)
         } else {
@@ -31,7 +27,7 @@ export default function AdminDashboard() {
         }
       } catch (error) {
         console.error('Erro ao processar o token:', error)
-        router.push('/login')
+        router.push('/auth')
       }
     } else {
       router.push('/login')

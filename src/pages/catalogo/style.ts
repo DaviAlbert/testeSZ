@@ -67,50 +67,75 @@ export const AddToCartButton = styled('button', {
   border: 'none',
   cursor: 'pointer',
   transition: 'background 0.2s',
-  marginTop: '5px',
+  margin: '5px',
 
   '&:hover': {
     backgroundColor: '$ignite300',
   },
 })
 
-export const Carrinho = styled('div', {
-  backgroundColor: '$gray900',
-  position: 'fixed',
-  width: '25%',
-  height: '75%',
-  right: '0',
-  borderRadius: '5px 0px 0px 5px',
-  display: 'flex',
-  flexDirection: 'column',
-  alignItems: 'center',
-  marginTop: '10px',
-
-  '&:hover': {
-    width: '30%',
-  },
-})
-
 export const Produto = styled('div', {
-  backgroundColor: '$gray700',
   display: 'flex',
-  width: '90%',
-  padding: '10px',
-  borderRadius: '8px',
-  margin: '10px',
-  textAlign: 'justify',
-  justifyContent: 'space-between',
+  alignItems: 'center',
+  marginBottom: '15px',
+  borderBottom: '1px solid #ddd',
+  paddingBottom: '10px',
+
+  '& img': {
+    width: '50px',
+    height: '50px',
+    objectFit: 'cover',
+    marginRight: '10px',
+    borderRadius: '$sm',
+  },
+
+  '& div': {
+    flexGrow: 1,
+  },
+
+  '& button': {
+    background: 'none',
+    border: 'none',
+    fontSize: '18px',
+    cursor: 'pointer',
+    color: '$ignite500',
+
+    '&:hover': {
+      color: '$ignite300',
+    },
+  },
 })
 
 export const Quantidade = styled('input', {
   backgroundColor: '$gray600',
+  color: '$gray200',
   display: 'flex',
+  fontSize: '20px',
   width: '30%',
   padding: '10px',
   margin: '5px auto',
   borderRadius: '5px',
   border: 'none',
   boxShadow: '0 2px 10px rgba(0,0,0,0.1)',
+})
+
+export const QuantidadeCarinho = styled('input', {
+  backgroundColor: '$gray600',
+  color: '$gray200',
+  display: 'flex',
+  fontSize: '20px',
+  width: '20%',
+  textAlign: 'center',
+  height: '10%',
+  padding: '3px',
+  margin: '5px',
+  borderRadius: '5px',
+  border: 'none',
+  boxShadow: '0 2px 10px rgba(0,0,0,0.1)',
+})
+
+export const Adicionado = styled('div', {
+  display:'flex',
 })
 
 export const ModalOverlay = styled('div', {
@@ -157,5 +182,73 @@ export const Nav = styled('nav', {
     textDecoration: 'none',
     fontWeight: 'bold',
     fontSize: '16px',
+  },
+})
+
+export const Backdrop = styled('div', {
+  position: 'fixed',
+  top: 0,
+  left: 0,
+  width: '100%',
+  height: '100%',
+  background: 'rgba(0, 0, 0, 0.6)',
+  zIndex: 9,
+  backdropFilter: 'blur(3px)',
+})
+
+export const Fechar = styled('button', {
+  fontSize: '24px',
+  background: 'none',
+  border: 'none',
+  cursor: 'pointer',
+  position: 'absolute',
+  top: '10px',
+  right: '15px',
+  color: '$gray300',
+
+  '&:hover': {
+    color: '$gray100',
+  },
+})
+
+export const FinalizarCompra = styled('button', {
+  width: '100%',
+  padding: '12px',
+  background: 'green',
+  color: 'white',
+  border: 'none',
+  fontSize: '16px',
+  cursor: 'pointer',
+  marginTop: '10px',
+  borderRadius: '8px',
+  fontWeight: 'bold',
+  transition: 'background 0.3s',
+
+  '&:hover': {
+    background: 'darkgreen',
+  },
+})
+
+export const CarrinhoContainer = styled('div', {
+  background: '$gray800',
+  position: 'fixed',
+  top: 0,
+  right: 0,
+  width: '350px',
+  height: '100vh',
+  padding: '20px',
+  boxShadow: '-2px 0px 10px rgba(0, 0, 0, 0.2)',
+  zIndex: 10,
+  overflowY: 'auto',
+  display: 'flex',
+  flexDirection: 'column',
+  transition: 'transform 0.3s',
+
+  '&.open': {
+    transform: 'translateX(0)',
+  },
+
+  '&.closed': {
+    transform: 'translateX(100%)',
   },
 })

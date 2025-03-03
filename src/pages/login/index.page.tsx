@@ -47,9 +47,10 @@ export default function Cadastro() {
     }
   }
 
+  // envia informações do formulário para a api
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
-    setMessage('') // Resetando mensagem de erro
+    setMessage('')
 
     const formData = {
       name,
@@ -62,6 +63,7 @@ export default function Cadastro() {
     }
 
     const validacao = CadastroSchema.safeParse(formData)
+    console.log(validacao)
 
     if (!validacao.success) {
       const firstError =
@@ -168,6 +170,7 @@ export default function Cadastro() {
           <p style={{ color: 'red', textAlign: 'center' }}>{message}</p>
         )}
 
+        <p>Ao criar uma conta você aceita nossos <a href='/condicoes'>termos e serviços</a></p>
         <Button type="submit">Cadastrar</Button>
       </form>
       <Button1 onClick={() => router.push('/auth')}>Ir para Login</Button1>

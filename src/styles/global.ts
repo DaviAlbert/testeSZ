@@ -11,5 +11,15 @@ export const globalStyles = globalCss({
     backgroundColor: '$gray800',
     color: '$gray100',
     '-webkit-font-smoothing': 'antialiased',
+    fontFamily: `'Montserrat', 'Roboto', sans-serif`,
+  },
+
+  'h1, h2, h3, h4, h5, h6': {
+    fontFamily: `'Montserrat', sans-serif`,
+    fontWeight: 700,
+  },
+
+  'button, input, textarea': {
+    fontFamily: `'Roboto', sans-serif`,
   },
 })

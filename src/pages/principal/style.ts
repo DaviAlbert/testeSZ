@@ -1,5 +1,4 @@
 import { styled } from '@ignite-ui/react'
-import { motion } from 'framer-motion'
 
 export const Container = styled('div', {
   display: 'flex',
@@ -7,33 +6,43 @@ export const Container = styled('div', {
   alignItems: 'center',
   padding: '$6',
   gap: '$6',
+  textAlign:'center',
+  maxWidth: '1200px',
+  margin: '0 auto',
 })
 
 export const SearchInput = styled('input', {
   width: '100%',
-  maxWidth: 400,
-  padding: '$2',
+  maxWidth: '400px',
+  padding: '$3',
   fontSize: '$md',
-  borderRadius: '$sm',
+  borderRadius: '$md',
   border: '1px solid $gray500',
-  backgroundColor: '$gray900',
+  backgroundColor: '$gray800',
   color: '$gray100',
+  transition: 'border-color 0.3s, box-shadow 0.3s',
 
   '&::placeholder': {
     color: '$gray400',
+  },
+
+  '&:focus': {
+    borderColor: '$ignite500',
+    boxShadow: '0 0 5px rgba(255, 87, 34, 0.6)',
+    outline: 'none',
   },
 })
 
 export const ProductList = styled('div', {
   backgroundColor: '$gray700',
-  padding: '10px',
+  padding: '$6',
   borderRadius: '8px',
   display: 'grid',
   gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))',
   gap: '$6',
   width: '100%',
-  maxWidth: 1160,
-  boxShadow: '0 2px 10px rgba(0,0,0,0.2)',
+  maxWidth: '1160px',
+  boxShadow: '0 4px 15px rgba(0, 0, 0, 0.3)',
 })
 
 export const ProductCard = styled('div', {
@@ -41,40 +50,57 @@ export const ProductCard = styled('div', {
   padding: '$4',
   borderRadius: '$md',
   textAlign: 'center',
-  boxShadow: '0 2px 10px rgba(0,0,0,0.4)',
-  width: '50%',
+  boxShadow: '0 4px 15px rgba(0, 0, 0, 0.5)',
+  width: '100%',
+  maxWidth: '300px',
   margin: 'auto',
+  transition: 'transform 0.3s, box-shadow 0.3s',
+
+  '&:hover': {
+    transform: 'scale(1.05)',
+    boxShadow: '0 6px 20px rgba(0, 0, 0, 0.6)',
+  },
 })
 
 export const ProductImage = styled('img', {
-  width: '75%',
+  width: '100%',
   height: 'auto',
   borderRadius: '$md',
   marginBottom: '$4',
-  marginTop: '10px',
   cursor: 'pointer',
+  transition: 'transform 0.3s',
+
+  '&:hover': {
+    transform: 'scale(1.1)',
+  },
 })
 
 export const Item = styled('div', {
   marginTop: '10px',
   fontSize: '20px',
-  color: '$gray400',
+  color: '$gray300',
   cursor: 'pointer',
+  transition: 'color 0.3s',
+
+  '&:hover': {
+    color: '$gray100',
+  },
 })
 
 export const AddToCartButton = styled('button', {
   backgroundColor: '$ignite500',
   color: '$gray100',
-  padding: '$2 $4',
+  padding: '$3 $5',
   fontSize: '$md',
-  borderRadius: '$sm',
+  borderRadius: '$md',
   border: 'none',
   cursor: 'pointer',
-  transition: 'background 0.2s',
+  transition: 'background 0.3s, transform 0.2s',
   marginTop: '5px',
 
   '&:hover': {
     backgroundColor: '$ignite300',
+    transform: 'scale(1.05)',
   },
 })
 
@@ -84,8 +110,9 @@ export const Backdrop = styled('div', {
   left: 0,
   width: '100%',
   height: '100%',
-  background: 'rgba(0, 0, 0, 0.5)',
+  background: 'rgba(0, 0, 0, 0.6)',
   zIndex: 9,
+  backdropFilter: 'blur(3px)',
 })
 
 export const CarrinhoContainer = styled('div', {
@@ -96,11 +123,20 @@ export const CarrinhoContainer = styled('div', {
   width: '350px',
   height: '100vh',
   padding: '20px',
-  boxShadow: '-2px 0px 10px rgba(0, 0, 0, 0.1)',
+  boxShadow: '-2px 0px 10px rgba(0, 0, 0, 0.2)',
   zIndex: 10,
   overflowY: 'auto',
   display: 'flex',
   flexDirection: 'column',
+  transition: 'transform 0.3s',
+
+  '&.open': {
+    transform: 'translateX(0)',
+  },
+
+  '&.closed': {
+    transform: 'translateX(100%)',
+  },
 })
 
 export const Fechar = styled('button', {
@@ -111,6 +147,11 @@ export const Fechar = styled('button', {
   position: 'absolute',
   top: '10px',
   right: '15px',
+  color: '$gray300',
+
+  '&:hover': {
+    color: '$gray100',
+  },
 })
 
 export const Produto = styled('div', {
@@ -125,6 +166,7 @@ export const Produto = styled('div', {
     height: '50px',
     objectFit: 'cover',
     marginRight: '10px',
+    borderRadius: '$sm',
   },
 
   '& div': {
@@ -136,19 +178,26 @@ export const Produto = styled('div', {
     border: 'none',
     fontSize: '18px',
     cursor: 'pointer',
+    color: '$ignite500',
+
+    '&:hover': {
+      color: '$ignite300',
+    },
   },
 })
 
 export const FinalizarCompra = styled('button', {
   width: '100%',
-  padding: '10px',
+  padding: '12px',
   background: 'green',
   color: 'white',
   border: 'none',
   fontSize: '16px',
   cursor: 'pointer',
   marginTop: '10px',
-  borderRadius: '5px',
+  borderRadius: '8px',
+  fontWeight: 'bold',
+  transition: 'background 0.3s',
 
   '&:hover': {
     background: 'darkgreen',
@@ -158,11 +207,13 @@ export const FinalizarCompra = styled('button', {
 export const Quantidade = styled('input', {
   backgroundColor: '$gray600',
   display: 'flex',
-  width: '30%',
+  width: '50px',
   padding: '10px',
   margin: '5px auto',
   borderRadius: '5px',
   border: 'none',
+  textAlign: 'center',
+  fontSize: '$md',
   boxShadow: '0 2px 10px rgba(0,0,0,0.1)',
 })
 
@@ -172,17 +223,19 @@ export const ModalOverlay = styled('div', {
   left: '0',
   right: '0',
   bottom: '0',
-  background: 'rgba(0, 0, 0, 0.5)',
+  background: 'rgba(0, 0, 0, 0.6)',
   display: 'flex',
   justifyContent: 'center',
   alignItems: 'center',
+  backdropFilter: 'blur(3px)',
 })
 
 export const Modal = styled('div', {
   background: '$gray800',
   padding: '20px',
   borderRadius: '8px',
-  width: '300px',
+  width: '320px',
+  boxShadow: '0 4px 15px rgba(0, 0, 0, 0.4)',
 })
 
 export const ModalContent = styled('div', {
@@ -193,9 +246,11 @@ export const ModalContent = styled('div', {
 })
 
 export const ModalInput = styled('input', {
-  width: '100px',
-  padding: '8px',
+  width: '120px',
+  padding: '10px',
   textAlign: 'center',
+  borderRadius: '5px',
+  border: '1px solid $gray500',
 })
 
 export const Nav = styled('nav', {
@@ -204,26 +259,32 @@ export const Nav = styled('nav', {
   alignItems: 'center',
   gap: '10px',
   marginTop: '5px',
-
-  a: {
-    color: 'white',
-    textDecoration: 'none',
-    fontWeight: 'bold',
-    fontSize: '16px',
-  },
 })
 
 export const Titulo = styled('h2', {
-  display: 'flex',
-  flexDirection: 'column',
-  alignItems: 'center',
-  gap: '10px',
-  marginTop: '5px',
+  fontSize: '24px',
+  fontWeight: 'bold',
+  color: '$gray100',
+  textAlign: 'center',
+  width: '100%',
+  marginTop: '10px',
+})
 
-  a: {
-    color: 'white',
-    textDecoration: 'none',
-    fontWeight: 'bold',
-    fontSize: '16px',
-  },
+export const QuantidadeCarinho = styled('input', {
+  backgroundColor: '$gray600',
+  color: '$gray200',
+  display: 'flex',
+  fontSize: '20px',
+  width: '20%',
+  textAlign: 'center',
+  height: '10%',
+  padding: '3px',
+  margin: '5px',
+  borderRadius: '5px',
+  border: 'none',
+  boxShadow: '0 2px 10px rgba(0,0,0,0.1)',
+})
+
+export const Adicionado = styled('div', {
+  display:'flex',
 })
