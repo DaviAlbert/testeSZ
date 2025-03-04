@@ -23,6 +23,7 @@ PNPM:
 pnpm dev
 ```
 BUN:
+```bash
 bun dev
 ```
 
