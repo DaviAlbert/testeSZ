@@ -29,7 +29,7 @@ bun dev
 
 Abra o link mostrado no cmd no seu navegador para ver o resultado.
 
-Você pode começar a editar a página modificando `app/page.tsx`. A página é atualizada automaticamente conforme você edita o arquivo.
+Você pode começar a editar as páginas modificando or arquivos encontrados na pasta `src/pages`. As páginas são atualizadas automaticamente conforme você edita os arquivos.
 
 Este projeto usa [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) para otimizar e carregar automaticamente a fonte [Geist](https://vercel.com/font), uma nova família tipográfica da Vercel.
 
