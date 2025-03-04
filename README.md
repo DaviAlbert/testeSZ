@@ -12,10 +12,15 @@ Depois, execute o servidor de desenvolvimento:
 
 ```bash
 npm run dev
+```
 # ou
+```bash
 yarn dev
+```
 # ou
+```bash
 pnpm dev
+```
 # ou
 bun dev
 ```
