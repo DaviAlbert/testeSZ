@@ -2,7 +2,13 @@ Este é um projeto [Next.js](https://nextjs.org) inicializado com [`create-next-
 
 ## Começando  
 
-Primeiro, execute o servidor de desenvolvimento:
+Primeiro, execute no CMD o seguinte comando: 
+
+```bash
+npx prisma generate
+```
+
+Depois, execute o servidor de desenvolvimento:
 
 ```bash
 npm run dev
