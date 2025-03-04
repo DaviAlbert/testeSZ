@@ -5,6 +5,8 @@ import Slider from 'react-slick'
 import { Container, Image, Button, Input, TextArea } from './style'
 import 'slick-carousel/slick/slick.css'
 import 'slick-carousel/slick/slick-theme.css'
+import Header from '../../componentes/header'
+import Footer from '../../componentes/footer'
 
 // Define a estrutura esperada do produto detalhado
 interface Produto {
@@ -23,6 +25,9 @@ export default function ProdutoDetalhado() {
   const [produto, setProduto] = useState<Produto | null>(null)
   const [isAdmin, setIsAdmin] = useState(false)
   const [editando, setEditando] = useState(false)
+  const [isLoggedIn, setIsLoggedIn] = useState(false)
+  
+  // Estados para edição
   const [name, setName] = useState('')
   const [descricao, setDescricao] = useState('')
   const [preco, setPreco] = useState(0)
@@ -54,12 +59,39 @@ export default function ProdutoDetalhado() {
     const userCookie = Cookies.get('authToken')
     if (userCookie) {
       const user = JSON.parse(userCookie)
+      setIsLoggedIn(true)
       setIsAdmin(user.admin)
     } else {
       alert('Token não encontrado, faça login.')
       router.push('/login')
     }
   }, [])
+
+  // Função para salvar alterações
+  const handleSave = async () => {
+    if (!produto) return
+
+    try {
+      const response = await fetch(`/api/editarProduto/${produto.id}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ name, descricao, preco })
+      })
+
+      if (response.ok) {
+        const updatedProduto = await response.json()
+        setProduto(updatedProduto)
+        setEditando(false)
+        alert('Produto atualizado com sucesso!')
+        router.reload()
+      } else {
+        throw new Error('Erro ao atualizar produto')
+      }
+    } catch (error) {
+      console.error('Erro ao salvar:', error)
+      alert('Erro ao salvar as alterações.')
+    }
+  }
 
   // Função para deletar um produto
   const handleDelete = async () => {
@@ -94,81 +126,77 @@ export default function ProdutoDetalhado() {
   if (!produto) return <p>Carregando...</p>
 
   return (
-    <Container>
-      <h1>{produto.name}</h1>
-
-      {/* Slider com imagens */}
-      <div style={{ width: '50%', minWidth: '300px', margin: 'auto' }}>
-        <Slider {...settings}>
-          <div>
-            <Image
-              src={produto.fotoPrincipal}
-              alt={`Imagem principal de ${produto.name}`}
-            />
-          </div>
-          {produto.imagens.map((imagem) => (
-            <div key={imagem.id}>
-              <Image src={imagem.url} alt={produto.name} />
+    <>
+      <Header isLoggedIn={isLoggedIn} userName={name} Itens={-1} Admin={isAdmin} />
+      <Container>
+        <h1>{produto.name}</h1>
+        <div style={{ width: '50%', minWidth: '300px', margin: 'auto' }}>
+          <Slider {...settings}>
+            <div>
+              <Image
+                src={produto.fotoPrincipal}
+                alt={`Imagem principal de ${produto.name}`}
+              />
             </div>
-          ))}
-        </Slider>
-      </div>
-
-      {!editando ? (
-        <>
-          <p>
-            <strong>Descrição:</strong> {produto.descricao}
-          </p>
-          <p>
-            <strong>Preço:</strong> R$ {produto.preco.toFixed(2)}
-          </p>
-          <p>
-            <strong>Quantidade disponível:</strong> {produto.quantidade}
-          </p>
-        </>
-      ) : (
-        <>
-          <Input
-            type="text"
-            value={name}
-            onChange={(e) => setName(e.target.value)}
-            placeholder="Name"
-          />
-          <TextArea
-            value={descricao}
-            onChange={(e) => setDescricao(e.target.value)}
-            placeholder="Descrição"
-          />
-          <Input
-            type="number"
-            value={preco}
-            onChange={(e) => setPreco(Number(e.target.value))}
-            placeholder="Preço"
-          />
-        </>
-      )}
-
-      {isAdmin && (
-        <div>
-          {!editando ? (
-            <>
-              <Button onClick={() => setEditando(true)}>Editar</Button>
-              <Button onClick={handleDelete} style={{ background: 'red' }}>
-                Excluir
-              </Button>
-            </>
-          ) : (
-            <>
-              <Button
-                onClick={() => setEditando(false)}
-                style={{ background: 'gray' }}
-              >
-                Cancelar
-              </Button>
-            </>
-          )}
+            {produto.imagens.map((imagem) => (
+              <div key={imagem.id}>
+                <Image src={imagem.url} alt={produto.name} />
+              </div>
+            ))}
+          </Slider>
         </div>
-      )}
-    </Container>
+
+        {!editando ? (
+          <>
+            <p><strong>Descrição:</strong> {produto.descricao}</p>
+            <p><strong>Preço:</strong> R$ {produto.preco.toFixed(2)}</p>
+            <p><strong>Quantidade disponível:</strong> {produto.quantidade}</p>
+          </>
+        ) : (
+          <>
+            <Input
+              type="text"
+              value={name}
+              onChange={(e) => setName(e.target.value)}
+              placeholder="Nome"
+            />
+            <Input
+              value={descricao}
+              onChange={(e) => setDescricao(e.target.value)}
+              placeholder="Descrição"
+            />
+            <Input
+              type="number"
+              value={preco}
+              onChange={(e) => setPreco(Number(e.target.value))}
+              placeholder="Preço"
+            />
+          </>
+        )}
+
+        {isAdmin && (
+          <div>
+            {!editando ? (
+              <>
+                <Button onClick={() => setEditando(true)}>Editar</Button>
+                <Button onClick={handleDelete} style={{ background: 'red' }}>
+                  Excluir
+                </Button>
+              </>
+            ) : (
+              <>
+                <Button onClick={handleSave} style={{ background: 'green' }}>
+                  Salvar
+                </Button>
+                <Button onClick={() => setEditando(false)} style={{ background: 'gray' }}>
+                  Cancelar
+                </Button>
+              </>
+            )}
+          </div>
+        )}
+      </Container>
+      <Footer />
+    </>
   )
 }

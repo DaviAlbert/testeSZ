@@ -35,8 +35,6 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       // Garantir que todas as imagens sejam strings válidas
       const imagensValidas = fotosOpcionais.filter((foto) => typeof foto === "string");
 
-      console.log("🖼️ Imagens validadas para inserção:", imagensValidas);
-
       if (imagensValidas.length > 0) {
         // Salvar todas as imagens usando Promise.all para maior eficiência
         await Promise.all(
@@ -57,8 +55,6 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       where: { id: produto.id },
       include: { imagens: true },
     });
-
-    console.log("📦 Produto final com imagens:", produtoComImagens);
 
     return res.status(201).json({
       message: "Produto cadastrado com sucesso!",

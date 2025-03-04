@@ -4,6 +4,7 @@ export const Container = styled('div', {
   maxWidth: '1000px',
   maxHeight: '500px',
   display: 'flex',
+  margin: 'auto',
   flexDirection: 'column',
   alignItems: 'center',
   padding: '$6',
@@ -46,4 +47,14 @@ export const Input = styled('input', {
   width: '100%',
   padding: '8px',
   margin: '5px 0',
+  resize: 'none',
+  boxSizing: 'border-box',
+  border: '1px solid #ccc',
+  borderRadius: '4px',
+  fontSize: '16px',
+  outline: 'none',
+  '&:focus': {
+    borderColor: '#007bff',
+  },
 })
+

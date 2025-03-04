@@ -86,7 +86,7 @@ export default function Perfil() {
 
   return (
     <>
-      <Header isLoggedIn={isLoggedIn} userName={name} Itens={0} Admin={admin} />
+      <Header isLoggedIn={isLoggedIn} userName={name} Itens={-1} Admin={admin} />
       <Container>
         <ProfileCard>
           <h2>Perfil</h2>

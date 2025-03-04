@@ -223,7 +223,8 @@ export default function Home() {
       });
 
       if (response.ok) {
-        alert('Produto adicionado ao carrinho!');
+        console.log('Produto adicionado ao carrinho!');
+        router.reload()
         setModalVisible(false);
       } else {
         const errorData = await response.json();

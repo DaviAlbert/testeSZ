@@ -35,7 +35,7 @@ export default async function handler(
         return res.status(404).json({ error: 'Carrinho não encontrado' })
       }
     } catch (error) {
-      console.error('Erro no backend:', error)
+      console.error('Erro no backend:', error instanceof Error ? error.message : error)
       return res
         .status(500)
         .json({ error: 'Erro ao buscar produtos do carrinho' })

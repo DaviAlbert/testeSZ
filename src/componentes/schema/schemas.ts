@@ -15,6 +15,7 @@ const imageSchema = z.object({
 
 // Validação para cadastro de Produto no banco de dados
 export const ProdutoSchema = z.object({
+  id: z.string().optional(),
   name: z.string().min(1, 'O nome do produto é obrigatório'),
   descricao: z.string().min(5, 'A descrição deve ter pelo menos 5 caracteres'),
   preco: z.number().min(0.01, 'O preço deve ser maior que zero'),
