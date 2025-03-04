@@ -10,18 +10,19 @@ npx prisma generate
 
 Depois, execute o servidor de desenvolvimento:
 
+NPM:
 ```bash
 npm run dev
 ```
-# ou
+Yarn:
 ```bash
 yarn dev
 ```
-# ou
+PNPM:
 ```bash
 pnpm dev
 ```
-# ou
+BUN:
 bun dev
 ```
 
