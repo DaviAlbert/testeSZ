@@ -7,6 +7,8 @@ import {
   EditButton,
   SaveButton,
   Message,
+  File,
+  Foto,
 } from './style'
 import Header from '../../componentes/header'
 import Footer from '../../componentes/footer'
@@ -45,9 +47,10 @@ export default function Perfil() {
         .then((data) => {
           setName(data.name)
           setEmail(data.email)
-          setTelefone(data.telefone || '')
-          setNascimento(data.Nascimento || '')
-          setFoto(data.foto || '')
+          setTelefone(data.telefone)
+          const dataFormatada = new Date(data.Nascimento).toISOString().split('T')[0]
+          setNascimento(dataFormatada)
+          setFoto(data.foto)
           setAdmin(data.admin)
         })
         .catch((error) => console.error('Erro ao buscar perfil:', error))
@@ -84,26 +87,28 @@ export default function Perfil() {
     }
   }
 
+  console.log(nascimento)
   return (
     <>
       <Header isLoggedIn={isLoggedIn} userName={name} Itens={-1} Admin={admin} />
       <Container>
+        <h2>Perfil</h2>
         <ProfileCard>
-          <h2>Perfil</h2>
-
+          <Foto>
           {foto ? (
             <img
               src={foto}
               alt="Foto de perfil"
-              style={{ width: 100, borderRadius: '50%', marginBottom: 10 }}
+              style={{ width: '100px', height: '100px', borderRadius: '50%', marginBottom: 10 }}
             />
           ) : (
             <p>Sem foto</p>
           )}
 
           {isEditing && (
-            <input type="file" accept="image/*" onChange={handleFileChange} />
+            <File type="file" accept="image/*" onChange={handleFileChange} />
           )}
+          </Foto>
 
           <ProfileField>
             <label>Nome:</label>

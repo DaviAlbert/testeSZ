@@ -1,8 +1,6 @@
 import { styled } from '@ignite-ui/react'
 
 export const Container = styled('div', {
-  maxWidth: '1000px',
-  maxHeight: '500px',
   display: 'flex',
   margin: 'auto',
   flexDirection: 'column',
@@ -12,8 +10,8 @@ export const Container = styled('div', {
 })
 
 export const Image = styled('img', {
-  maxWidth: '100%',
-  maxHeight: '100%',
+  maxWidth: '200px',
+  maxHeight: '500px',
   borderRadius: '8px',
   margin: 'auto',
 })
@@ -24,7 +22,7 @@ export const Button = styled('button', {
   width: '100%',
   border: 'none',
   borderRadius: '$sm',
-  fontSize: '$md',
+  fontSize: '25px',
   backgroundColor: '$ignite500',
   color: '$white',
   marginTop: '$2',
@@ -44,17 +42,20 @@ export const TextArea = styled('textarea', {
 })
 
 export const Input = styled('input', {
+  textAlign: 'center',
+  color: '$gray200',
+  backgroundColor: '$gray700',
+  boxShadow: '-2px 0px 10px rgba(0, 0, 0, 0.2)',
   width: '100%',
   padding: '8px',
   margin: '5px 0',
   resize: 'none',
   boxSizing: 'border-box',
-  border: '1px solid #ccc',
+  border: 'none',
   borderRadius: '4px',
-  fontSize: '16px',
+  fontSize: '25px',
   outline: 'none',
   '&:focus': {
     borderColor: '#007bff',
   },
 })
-

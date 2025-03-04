@@ -1,4 +1,4 @@
-import { styled } from '@ignite-ui/react'
+import { styled, keyframes } from '@ignite-ui/react'
 
 export const Container = styled('div', {
   display: 'flex',
@@ -115,6 +115,11 @@ export const Backdrop = styled('div', {
   backdropFilter: 'blur(3px)',
 })
 
+const slideIn = keyframes({
+  '0%': { transform: 'translateX(100%)' },
+  '100%': { transform: 'translateX(0)' },
+});
+
 export const CarrinhoContainer = styled('div', {
   background: '$gray800',
   position: 'fixed',
@@ -128,16 +133,8 @@ export const CarrinhoContainer = styled('div', {
   overflowY: 'auto',
   display: 'flex',
   flexDirection: 'column',
-  transition: 'transform 0.3s',
-
-  '&.open': {
-    transform: 'translateX(0)',
-  },
-
-  '&.closed': {
-    transform: 'translateX(100%)',
-  },
-})
+  animation: `${slideIn} 0.3s ease-out`,
+});
 
 export const Fechar = styled('button', {
   fontSize: '24px',

@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react'
 import { useRouter } from 'next/router'
 import Cookies from 'js-cookie'
 import Slider from 'react-slick'
-import { Container, Image, Button, Input, TextArea } from './style'
+import { Container, Image, Button, Input } from './style'
 import 'slick-carousel/slick/slick.css'
 import 'slick-carousel/slick/slick-theme.css'
 import Header from '../../componentes/header'
@@ -26,13 +26,12 @@ export default function ProdutoDetalhado() {
   const [isAdmin, setIsAdmin] = useState(false)
   const [editando, setEditando] = useState(false)
   const [isLoggedIn, setIsLoggedIn] = useState(false)
-  
-  // Estados para edição
   const [name, setName] = useState('')
   const [descricao, setDescricao] = useState('')
   const [preco, setPreco] = useState(0)
+  const [quantidade, setQuantidade] = useState(0)
 
-  // Buscar produto via API ao carregar a página
+  // Busca o produto via API ao carregar a página através do ID
   useEffect(() => {
     if (!id) return
 
@@ -45,6 +44,7 @@ export default function ProdutoDetalhado() {
         setName(data.name)
         setDescricao(data.descricao)
         setPreco(data.preco)
+        setQuantidade(data.quantidade)
       } catch (error) {
         console.error(error)
         alert('Erro ao buscar produto')
@@ -54,20 +54,25 @@ export default function ProdutoDetalhado() {
     fetchProduto()
   }, [id])
 
-  // Verificação de admin
+  // Verifica se o usuário é um adminsitrador
   useEffect(() => {
     const userCookie = Cookies.get('authToken')
     if (userCookie) {
       const user = JSON.parse(userCookie)
       setIsLoggedIn(true)
       setIsAdmin(user.admin)
+
+      if(isAdmin){
+        alert('Usuário não é administrador.')
+        router.push('/catalogo')
+      }
     } else {
       alert('Token não encontrado, faça login.')
       router.push('/login')
     }
-  }, [])
+  }, [router])
 
-  // Função para salvar alterações
+  // Função para salvar alterações, enviando para a API
   const handleSave = async () => {
     if (!produto) return
 
@@ -75,7 +80,7 @@ export default function ProdutoDetalhado() {
       const response = await fetch(`/api/editarProduto/${produto.id}`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ name, descricao, preco })
+        body: JSON.stringify({ name, descricao, preco, quantidade })
       })
 
       if (response.ok) {
@@ -93,7 +98,7 @@ export default function ProdutoDetalhado() {
     }
   }
 
-  // Função para deletar um produto
+  // Função para deletar um produto, enviando para a API
   const handleDelete = async () => {
     if (!confirm('Tem certeza que deseja excluir este produto?')) return
 
@@ -113,7 +118,7 @@ export default function ProdutoDetalhado() {
     }
   }
 
-  // Configuração do Slider
+  // Configuração do Slider para as imanges do produto
   const settings = {
     dots: true,
     infinite: true,
@@ -169,6 +174,12 @@ export default function ProdutoDetalhado() {
               type="number"
               value={preco}
               onChange={(e) => setPreco(Number(e.target.value))}
+              placeholder="Preço"
+            />
+            <Input
+              type="number"
+              value={quantidade}
+              onChange={(e) => setQuantidade(Number(e.target.value))}
               placeholder="Preço"
             />
           </>

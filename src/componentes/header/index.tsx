@@ -63,10 +63,10 @@ export default function Header({
             {isDropdownOpen && (
               <DropdownMenu isOpen={isDropdownOpen}>
                 {Admin && (
-                  <DropdownItem onClick={AdminPage}>Administração</DropdownItem>
+                  <DropdownItem style={{backgroundColor:'rgb(120, 149, 182)'}} onClick={AdminPage}>Administração</DropdownItem>
                 )}
                 <DropdownItem onClick={PerfilPage}>Perfil</DropdownItem>
-                <DropdownItem onClick={handleLogout}>Sair</DropdownItem>
+                <DropdownItem style={{backgroundColor:'rgb(111, 25, 11)', width: '75%'}} onClick={handleLogout}>Sair</DropdownItem>
               </DropdownMenu>
             )}
           </div>

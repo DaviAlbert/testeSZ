@@ -71,10 +71,10 @@ export const EditButton = styled('button', {
 })
 
 export const SaveButton = styled(EditButton, {
-  backgroundColor: '$green500',
+  backgroundColor: '$ignite500',
 
   '&:hover': {
-    backgroundColor: '$green300',
+    backgroundColor: '$ignite700',
   },
 })
 
@@ -82,4 +82,17 @@ export const Message = styled('p', {
   color: '$red500',
   fontSize: '$md',
   marginTop: '$3',
+})
+
+export const File = styled('input', {
+  width:'115px',
+  marginTop: '40px',
+})
+
+export const Foto = styled('div', {
+  display: 'flex',
+  flexDirection: 'column',
+  margin: 'auto',
+  alignItems: 'center',
+  marginBottom: '10px',
 })

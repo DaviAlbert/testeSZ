@@ -78,16 +78,6 @@ export const UserSection = styled('div', {
     cursor: 'pointer',
   },
 
-  button: {
-    background: '#f39c12',
-    color: 'white',
-    border: 'none',
-    padding: '10px 20px',
-    cursor: 'pointer',
-    borderRadius: '6px',
-    fontSize: '18px',
-  },
-
   '@media (max-width: 768px)': {
     flexDirection: 'column',
     gap: '15px',
@@ -134,7 +124,7 @@ export const DropdownMenu = styled('div', {
   flexDirection: 'column',
   marginTop: '60px',
   position: 'absolute',
-  right: '2%', // Posição padrão para telas grandes
+  right: '6%',
   background: '$gray600',
   color: 'black',
   borderRadius: '6px',
@@ -150,22 +140,31 @@ export const DropdownMenu = styled('div', {
   },
 
   '@media (max-width: 768px)': {
-    top: '26%', // Ajustar para aparecer abaixo do nome do usuário
-    left: '50%', // Centraliza horizontalmente
-    transform: 'translateX(-50%)', // Ajusta para ficar exatamente no meio
-    width: '200px', // Ajustar a largura
+    top: '26%',
+    left: '50%',
+    transform: 'translateX(-50%)',
+    width: '200px',
+  },
+  '@media (max-width: 600px)': {
+    top: '28%',
+    left: '50%',
+    transform: 'translateX(-50%)',
+    width: '200px',
   },
 })
 
 
 export const DropdownItem = styled('button', {
-  display: 'flex',
-  padding: '10px',
-  backgroundColor: 'red',
+  background: '$ignite500',
+  width: '100%',
+  color: 'white',
+  border: 'none',
+  padding: '10px 20px',
   cursor: 'pointer',
-  margin: '6px auto',
-  fontSize: '16px',
-  borderRadius: '4px',
+  borderRadius: '6px',
+  textAlign: 'center',
+  fontSize: '18px',
+  margin: '5px auto',
 
   '&:hover': {
     opacity: '0.8',

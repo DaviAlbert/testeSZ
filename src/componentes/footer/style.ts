@@ -1,6 +1,7 @@
 import { styled } from '@ignite-ui/react'
 
 export const FooterContainer = styled('footer', {
+  position: 'realtive',
   display: 'flex',
   flexDirection: 'column',
   alignItems: 'center',
@@ -8,12 +9,10 @@ export const FooterContainer = styled('footer', {
   backgroundColor: '$gray900',
   padding: '$6',
   color: '$gray100',
-  position: 'relative',
   bottom: '0',
   width: '100%',
   gap: '$4',
   textAlign: 'center',
-  marginTop: '720px',
 
   div: {
     display: 'flex',

@@ -3,8 +3,6 @@ import { useRouter } from 'next/router'
 import Cookies from 'js-cookie'
 import { Container, Title, InfoCard, Grid, Button } from './style'
 import Header from '../../componentes/header'
-
-// função principal da página de administrador
 export default function AdminDashboard() {
   const [isAdmin, setIsAdmin] = useState(false)
   const [userCount, setUserCount] = useState<number | null>(null)
@@ -22,11 +20,12 @@ export default function AdminDashboard() {
         setIsLoggedIn(true)
         if (tokenObject.admin) {
           setIsAdmin(true)
+          setUserName(tokenObject.name)
         } else {
           router.push('/catalogo')
         }
       } catch (error) {
-        console.error('Erro ao processar o token:', error)
+        alert(`Token incompatível: ${error}`)
         router.push('/auth')
       }
     } else {

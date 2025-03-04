@@ -269,6 +269,7 @@ export default function Home() {
 
   const toggleCart = () => {
     setIsCartOpen(!isCartOpen)
+    console.log(isCartOpen)
   }
 
   // Filtra os produtos com base no nome, descrição e preço
@@ -304,7 +305,7 @@ export default function Home() {
       {isCartOpen && (
         <>
           <Backdrop onClick={toggleCart} />
-          <CarrinhoContainer>
+          <CarrinhoContainer className={isCartOpen ? 'open' : 'closed'}>
             <Fechar onClick={toggleCart}>✖</Fechar>
 
             {produtosCarrinho.length > 0 ? (

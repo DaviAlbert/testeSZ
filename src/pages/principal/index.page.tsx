@@ -124,22 +124,17 @@ export default function Home() {
 
   const sendOrderEmail = async () => {
     try {
-      // Chama a API para pegar todos os e-mails dos administradores
       const response = await fetch('/api/sendAdminEmail', {
         method: 'GET',
-        headers: {
-          'Content-Type': 'application/json',
-        }
+        headers: { 'Content-Type': 'application/json' },
       });
   
       const data = await response.json();
   
-      // Verifica se a API retornou os e-mails corretamente
       if (!data || !data.emails || data.emails.length === 0) {
         throw new Error("Nenhum e-mail de admin encontrado.");
       }
   
-      // Envia um e-mail para cada administrador encontrado
       const emailPromises = data.emails.map(async (email: string) => {
         return emailjs.send(
           process.env.NEXT_PUBLIC_EMAILJS_SERVICE_ID!,
@@ -148,22 +143,32 @@ export default function Home() {
             to_name: "Admin",
             from_name: userName || "Usuário Anônimo",
             valor: `R$ ${totalCarrinho.toFixed(2).replace(".", ",")}`,
-            to_email: email, // Envia para cada e-mail individualmente
+            to_email: email,
           },
           process.env.NEXT_PUBLIC_EMAILJS_PUBLIC_KEY!
         );
       });
   
-      // Aguarda o envio de todos os e-mails
       await Promise.all(emailPromises);
-  
       console.log("✅ Emails enviados com sucesso!");
-      alert("E-mails enviados com sucesso!");
+  
+      // 🔴 NOVA PARTE: Limpar o carrinho no backend
+      if (tokenObject.current.id) {
+        await fetch('/api/carrinho/limpar', {
+          method: 'DELETE',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ userId: tokenObject.current.id }),
+        });
+      }
+  
+      // 🔴 NOVA PARTE: Limpar o carrinho no frontend
+      setProdutosCarrinho([]);
+      alert("Compra finalizada! Seu carrinho foi esvaziado.");
     } catch (error) {
       console.error("❌ Erro ao enviar e-mails:", error);
-      alert("Erro ao enviar e-mails.");
+      alert("Erro ao finalizar compra.");
     }
-  };  
+  }  
 
   const handleRemoveFromCart = async (produtoId: string) => {
     if (!tokenObject.current.id) return;

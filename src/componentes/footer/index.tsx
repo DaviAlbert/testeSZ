@@ -5,7 +5,7 @@ import logo from '../../../assets/logo.png'
 export default function Footer() {
   return (
     <FooterContainer>
-      <div>
+      <div style={{gap:'5px'}}>
         <LogoFooter src={logo.src} alt="Logo da Loja" />
         <h3>SZ soluções</h3>
       </div>
