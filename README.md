@@ -1,5 +1,9 @@
 Este é um projeto [Next.js](https://nextjs.org) inicializado com [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
 
+O prójeto é um desafio criado pela SZsoluções com o objetivo de medir habilidades técnicas.
+
+O objetivo é criar um pequeno comércio digital.
+
 ## Começando  
 
 Primeiro, execute no CMD o seguinte comando: 
