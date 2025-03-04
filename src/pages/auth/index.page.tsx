@@ -65,6 +65,7 @@ export default function Login() {
             onChange={(e) => setEmail(e.target.value)}
           />
         </Campo>
+        <br />
         <Campo>
           <Label>Senha:</Label>
           <Input
@@ -74,6 +75,7 @@ export default function Login() {
             onChange={(e) => setSenha(e.target.value)}
           />
         </Campo>
+        <br />
         <Button type="submit">Entrar</Button>
       </form>
       <Link href="/login">

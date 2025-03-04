@@ -71,7 +71,7 @@ export default function Header({
             )}
           </div>
         ) : (
-          <button onClick={() => router.push('/auth')}>Entrar</button>
+          <DropdownItem onClick={() => router.push('/auth')}>Entrar</DropdownItem>
         )}
 
         {isLoggedIn && catalogo && (

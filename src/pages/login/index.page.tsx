@@ -10,6 +10,7 @@ import {
   Button,
   Button1,
   CheckInput,
+  TermsText,
 } from './style'
 
 export default function Cadastro() {
@@ -170,10 +171,10 @@ export default function Cadastro() {
           <p style={{ color: 'red', textAlign: 'center' }}>{message}</p>
         )}
 
-        <p>Ao criar uma conta você aceita nossos <a href='/condicoes'>termos e serviços</a></p>
+        <TermsText>Ao criar uma conta você aceita nossos <a href='/condicoes'>termos e serviços</a></TermsText>
         <Button type="submit">Cadastrar</Button>
       </form>
-      <Button1 onClick={() => router.push('/auth')}>Ir para Login</Button1>
+      <Button1 onClick={() => router.push('/auth')}>Voltar para autenticação</Button1>
     </Container>
   )
 }

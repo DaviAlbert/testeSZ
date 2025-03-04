@@ -66,11 +66,11 @@ export const Button = styled('button', {
 export const Button1 = styled('button', {
   textAlign: 'center',
   padding: '$3',
-  width: '75%',
+  width: '25%',
   border: 'none',
   borderRadius: '$sm',
   fontSize: '$md',
-  backgroundColor: '$red500',
+  backgroundColor: 'rgb(111, 25, 11)',
   color: '$white',
   margin: '$2 auto',
   cursor: 'pointer',
@@ -97,7 +97,7 @@ export const CheckboxInput = styled('input', {
 
 export const CheckInput = styled('input', {
   appearance: 'none',
-  marginTop: '5px',
+  margin: '5px auto',
   width: '116px',
   height: '20',
   borderRadius: '$sm',
@@ -105,6 +105,7 @@ export const CheckInput = styled('input', {
   backgroundColor: '$gray900',
   cursor: 'pointer',
   transition: 'all 0.2s ease-in-out',
+  boxShadow: '-2px 0px 10px rgba(0, 0, 0, 0.4)',
 
   '&:hover': {
     borderColor: '$gray300',
@@ -126,6 +127,26 @@ export const CheckInput = styled('input', {
       top: '50%',
       left: '50%',
       transform: 'translate(-50%, -50%)',
+    },
+  },
+})
+
+export const TermsText = styled('p', {
+  fontSize: '$sm',
+  color: '$gray300',
+  textAlign: 'center',
+  maxWidth: '100%',
+  lineHeight: 1.5,
+
+  a: {
+    color: '$ignite500',
+    textDecoration: 'none',
+    fontWeight: 'bold',
+    transition: 'color 0.2s ease-in-out',
+
+    '&:hover': {
+      color: '$ignite300',
+      textDecoration: 'underline',
     },
   },
 })

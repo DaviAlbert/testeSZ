@@ -35,6 +35,7 @@ export const Input = styled('input', {
   fontSize: '$md',
   backgroundColor: '$gray900',
   color: '$gray100',
+  boxShadow: '-2px 0px 10px rgba(0, 0, 0, 0.2)',
 
   '&::placeholder': {
     color: '$gray400',
@@ -62,11 +63,10 @@ export const Button = styled('button', {
 export const Button1 = styled('button', {
   textAlign: 'center',
   padding: '$3',
-  width: '75%',
   border: 'none',
   borderRadius: '$sm',
   fontSize: '$md',
-  backgroundColor: '$red500',
+  backgroundColor: 'rgb(120, 149, 182)',
   color: '$white',
   margin: '$2 auto',
   cursor: 'pointer',
