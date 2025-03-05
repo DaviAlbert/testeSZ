@@ -30,7 +30,7 @@ export const Input = styled('input', {
 })
 
 export const CheckInput = styled('input', {
-  appearance: 'none',
+  display: 'none',
   marginTop: '5px',
   width: '119px',
   height: '20',
@@ -89,12 +89,20 @@ export const ProductForm = styled('form', {
 })
 
 export const ProductImage = styled('img', {
-  width: '75%',
-  height: 'auto',
-  borderRadius: '$md',
-  marginBottom: '$4',
-  marginTop: '10px',
+  width: '150px',
+  height: '150px',
+  objectFit: 'cover',
+  borderRadius: '8px',
+  margin: '5px auto',
+  border: '2px solid $gray500',
+  padding: '5px',
+  boxShadow: '0 2px 10px rgba(0,0,0,0.1)',
   cursor: 'pointer',
+  transition: 'transform 0.2s ease-in-out',
+
+  '&:hover': {
+    transform: 'scale(1.05)',
+  },
 })
 
 export const Item = styled('div', {
@@ -228,5 +236,32 @@ export const Button = styled('button', {
 
   '&:hover': {
     backgroundColor: '$ignite300',
+  },
+})
+
+export const UploadButton = styled('label', {
+  display: 'flex',
+  alignItems: 'center',
+  justifyContent: 'center',
+  gap: '8px',
+  width: '50%',
+  padding: '10px 16px',
+  margin: 'auto',
+  backgroundColor: '$ignite200',
+  color: '$gray100',
+  fontSize: '$md',
+  fontWeight: 'bold',
+  borderRadius: '8px',
+  border: 'none',
+  cursor: 'pointer',
+  transition: 'background 0.3s ease-in-out',
+
+  '&:hover': {
+    backgroundColor: '$ignite500',
+    boxShadow: '0px 2px 5px rgba(0,0,0,0.4)',
+  },
+
+  '& input': {
+    display: 'none',
   },
 })

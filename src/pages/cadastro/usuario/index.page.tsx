@@ -14,8 +14,9 @@ import {
   Campo,
   CheckboxContainer,
   CheckboxInput,
-  Button,
   CheckInput,
+  UploadButton,
+  ProductImage,
 } from './style'
 
 export default function AddProduct() {
@@ -152,7 +153,7 @@ export default function AddProduct() {
         <ProductCard>
           <ProductForm onSubmit={handleSubmit}>
             <Campo>
-              <Label>Nome:</Label>
+              <Label style={{marginRight: '10px'}}>Nome:</Label>
               <Input
                 type="text"
                 placeholder="Digite seu nome"
@@ -161,7 +162,7 @@ export default function AddProduct() {
               />
             </Campo>
             <Campo>
-              <Label>Email:</Label>
+              <Label style={{marginRight: '10px'}}>Email:</Label>
               <Input
                 type="email"
                 placeholder="Digite seu email"
@@ -170,7 +171,7 @@ export default function AddProduct() {
               />
             </Campo>
             <Campo>
-              <Label>Telefone:</Label>
+              <Label style={{marginRight: '10px'}}>Telefone:</Label>
               <Input
                 type="text"
                 placeholder="Digite seu Telefone"
@@ -179,16 +180,7 @@ export default function AddProduct() {
               />
             </Campo>
             <Campo>
-              <Label>Data De Nascimento:</Label>
-              <Input
-                type="date"
-                placeholder="Digite sua data de nascimento"
-                value={nascimento}
-                onChange={(e) => setNascimento(e.target.value)}
-              />
-            </Campo>
-            <Campo>
-              <Label>Senha:</Label>
+              <Label style={{marginRight: '10px'}}>Senha:</Label>
               <Input
                 type="password"
                 placeholder="Digite sua senha"
@@ -197,13 +189,12 @@ export default function AddProduct() {
               />
             </Campo>
             <Campo>
-              <label htmlFor="imagens">Imagem do Perfil:</label>
-              <CheckInput
-                type="file"
-                id="imagens"
-                accept="image/*"
-                onChange={handleImageChange}
-                required
+              <Label style={{marginRight: '10px'}}>Data De Nascimento:</Label>
+              <Input style={{width: '25%'}}
+                type="date"
+                placeholder="Digite sua data de nascimento"
+                value={nascimento}
+                onChange={(e) => setNascimento(e.target.value)}
               />
             </Campo>
             <CheckboxContainer>
@@ -214,6 +205,23 @@ export default function AddProduct() {
               />
               <Label>Admin</Label>
             </CheckboxContainer>
+            <Campo>
+              <UploadButton htmlFor="fotosOpcionais">
+                📸 Adicionar Foto do Usuário
+              </UploadButton>
+              <CheckInput
+                type="file"
+                id="fotosOpcionais"
+                accept="image/*"
+                multiple
+                onChange={handleImageChange}
+              />
+            </Campo>
+            {imagemBase64.length > 0 && (
+              <div style={{ display: 'flex', gap: '10px', flexWrap: 'wrap' }}>
+                  <ProductImage src={imagemBase64} alt={`Foto de perfil`} />
+              </div>
+            )}
             {message && <p>{message}</p>}
             <div>
               <AddToCartButton type="submit" disabled={loading}>

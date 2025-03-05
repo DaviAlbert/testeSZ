@@ -185,7 +185,6 @@ export default function Home() {
 
       if (response.ok) {
         setProdutosCarrinho((prev) => prev.filter((p) => p.id !== produtoId));
-        alert('Produto removido do carrinho!');
       } else {
         const errorData = await response.json();
         alert(`Erro ao remover produto: ${errorData.error || 'Erro desconhecido'}`);
@@ -206,9 +205,11 @@ export default function Home() {
   }
 
   const handleConfirmAddToCart = async () => {
-    if (!selectedProduct) return
-    const userId = tokenObject.current.id
-
+    if (!selectedProduct) return;
+  
+    const userId = tokenObject.current.id;
+    const produtoId = selectedProduct.id;
+  
     const response = await fetch('/api/carrinho/adicionar', {
       method: 'POST',
       headers: {
@@ -216,24 +217,43 @@ export default function Home() {
       },
       body: JSON.stringify({
         userId,
-        produtoId: selectedProduct.id,
+        produtoId,
         quantidade: selectedQuantity,
       }),
-    })
-
+    });
+  
     if (response.ok) {
-      console.log('Produto adicionado ao carrinho!')
-      router.reload()
-      setModalVisible(false)
+      setProdutosCarrinho((prevCarrinho) => {
+        const produtoExistente = prevCarrinho.find((p) => p.id === produtoId);
+  
+        if (produtoExistente) {
+          return prevCarrinho.map((p) =>
+            p.id === produtoId
+              ? { ...p, quantidade: p.quantidade + selectedQuantity }
+              : p
+          );
+        } else {
+          return [
+            ...prevCarrinho,
+            {
+              id: selectedProduct.id,
+              name: selectedProduct.name,
+              quantidade: selectedQuantity,
+              preco: selectedProduct.preco,
+            },
+          ];
+        }
+      });
+  
+      setModalVisible(false);
     } else {
-      const errorData = await response.json()
+      const errorData = await response.json();
       alert(
-        `Erro ao adicionar produto ao carrinho: ${
-          errorData.error || 'Erro desconhecido'
-        }`,
-      )
+        `Erro ao adicionar produto ao carrinho: ${errorData.error || 'Erro desconhecido'}`
+      );
     }
-  }
+  };
+  
 
   const handleUpdateQuantity = async (produtoId: string, novaQuantidade: number) => {
     if (!tokenObject.current.id) return;
@@ -321,7 +341,7 @@ export default function Home() {
                     <QuantidadeCarinho
                       type="number"
                       min="1"
-                      max={quantidades[produtos.indexOf(selectedProduct)]}
+                      max={quantidades[produtos.indexOf(selectedProduct!)]}
                       value={produto.quantidade}
                       onChange={(e) => handleUpdateQuantity(produto.id, Number(e.target.value))}
                     />

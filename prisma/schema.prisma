@@ -13,9 +13,9 @@ model User {
   name       String
   password   String
   admin      Boolean
-  foto       String 
-  telefone   String
-  Nascimento DateTime
+  photo       String 
+  phone   String
+  birthday DateTime
   created_at DateTime @default(now())
   updated_at DateTime @updatedAt
 
@@ -32,9 +32,11 @@ model Produto {
   descricao     String
   preco         Float
   quantidade    Int
-  fotoPrincipal String    // Apenas 1 imagem principal (URL)
+  fotoPrincipal String
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
 
-  imagens       Imagem[] @relation("ProdutoImagens") // Permitir array vazio ou nulo
+  imagens       Imagem[] @relation("ProdutoImagens")
   carrinhos     CarrinhoProduto[]
 
   @@map("produto")
@@ -47,6 +49,8 @@ model Imagem {
   id         String   @id @default(uuid())
   url        String   
   idProduto  String   
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
 
   produto    Produto  @relation("ProdutoImagens", fields: [idProduto], references: [id], onDelete: Cascade)
 
@@ -57,6 +61,8 @@ model Imagem {
 model Carrinho {
   id         String     @id @default(uuid())
   idUsuario  String     @unique
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
 
   user       User       @relation(fields: [idUsuario], references: [id])
   produtos   CarrinhoProduto[]
@@ -69,6 +75,8 @@ model CarrinhoProduto {
   idCarrinho  String
   idProduto   String
   quantidade  Int      @default(1)
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
 
   carrinho    Carrinho @relation(fields: [idCarrinho], references: [id], onDelete: Cascade)
   produto     Produto  @relation(fields: [idProduto], references: [id], onDelete: Cascade)

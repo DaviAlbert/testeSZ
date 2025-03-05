@@ -12,6 +12,8 @@ import {
   SearchInput,
   ProductForm,
   Campo,
+  ProductImage,
+  UploadButton,
 } from './style'
 
 export default function AddProduct() {
@@ -182,6 +184,7 @@ export default function AddProduct() {
         setTimeout(() => router.push('/catalogo'), 1000)
       } else {
         const errorData = await response.json()
+        console.log(errorData)
       }
     } catch (error) {
       setMessage('Erro ao conectar com o servidor. Tente novamente.')
@@ -205,7 +208,7 @@ export default function AddProduct() {
         <ProductCard>
           <ProductForm onSubmit={handleSubmit}>
             <Campo>
-              <label htmlFor="nome">Nome do Produto:</label>
+              <label style={{marginRight: '10px'}} htmlFor="nome">Nome do Produto:</label>
               <SearchInput
                 type="text"
                 id="nome"
@@ -216,7 +219,7 @@ export default function AddProduct() {
             </Campo>
 
             <Campo>
-              <label htmlFor="descricao">Descrição do Produto:</label>
+              <label style={{marginRight: '10px'}} htmlFor="descricao">Descrição do Produto:</label>
               <SearchInput
                 type="text"
                 id="descricao"
@@ -227,7 +230,7 @@ export default function AddProduct() {
             </Campo>
 
             <Campo>
-              <label htmlFor="quantidade">Quantidade:</label>
+              <label style={{marginRight: '10px'}} htmlFor="quantidade">Quantidade:</label>
               <SearchInput
                 type="number"
                 id="quantidade"
@@ -239,7 +242,7 @@ export default function AddProduct() {
             </Campo>
 
             <Campo>
-              <label htmlFor="preco">Preço:</label>
+              <label style={{marginRight: '10px'}} htmlFor="preco">Preço:</label>
               <SearchInput
                 type="number"
                 id="preco"
@@ -250,7 +253,9 @@ export default function AddProduct() {
             </Campo>
 
             <Campo>
-              <label htmlFor="fotoPrincipal">Foto Principal:</label>
+              <UploadButton htmlFor="fotoPrincipal">
+                📷 Escolher Foto Principal
+              </UploadButton>
               <CheckInput
                 type="file"
                 id="fotoPrincipal"
@@ -259,9 +264,13 @@ export default function AddProduct() {
                 required
               />
             </Campo>
-
+            {fotoPrincipalBase64 && (
+              <ProductImage src={fotoPrincipalBase64} alt="Foto Principal" />
+            )}
             <Campo>
-              <label htmlFor="fotosOpcionais">Fotos Opcionais (Máx: 3):</label>
+              <UploadButton htmlFor="fotosOpcionais">
+                📸 Adicionar Fotos Opcionais
+              </UploadButton>
               <CheckInput
                 type="file"
                 id="fotosOpcionais"
@@ -270,6 +279,13 @@ export default function AddProduct() {
                 onChange={handleFotosOpcionaisChange}
               />
             </Campo>
+            {fotosOpcionaisBase64.length > 0 && (
+              <div style={{ display: 'flex', gap: '10px', flexWrap: 'wrap' }}>
+                {fotosOpcionaisBase64.map((foto, index) => (
+                  <ProductImage key={index} src={foto} alt={`Foto Opcional ${index + 1}`} />
+                ))}
+              </div>
+            )}
 
             {message && (
               <p style={{ color: 'red', textAlign: 'center' }}>{message}</p>
