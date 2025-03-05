@@ -56,6 +56,9 @@ export default function Header({
         <h3>SZ soluções</h3>
       </div>
       <UserSection>
+        {Admin && (
+          <p onClick={() => router.push('/pedidos')}>Pedidos</p>
+        )}
         <p onClick={() => router.push('/catalogo')}>Produtos</p>
         {isLoggedIn ? (
           <div onClick={() => setIsDropdownOpen(!isDropdownOpen)}>

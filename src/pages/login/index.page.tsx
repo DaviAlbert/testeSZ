@@ -11,6 +11,8 @@ import {
   Button1,
   CheckInput,
   TermsText,
+  ProductImage,
+  ErrorImage,
 } from './style'
 
 export default function Cadastro() {
@@ -20,8 +22,9 @@ export default function Cadastro() {
   const [telefone, setTelefone] = useState('')
   const [nascimento, setNascimento] = useState('')
   const [imagemBase64, setImagemBase64] = useState<string>('')
-  const [message, setMessage] = useState('') // Única mensagem de erro
+  const [message, setMessage] = useState('')
   const router = useRouter()
+  const [imagemErro, setImagemErro] = useState(false)
 
   // Função para converter imagem em Base64
   const convertImageToBase64 = (file: File) => {
@@ -40,8 +43,10 @@ export default function Cadastro() {
       if (fileType === 'image/jpeg' || fileType === 'image/png') {
         convertImageToBase64(file)
       } else {
-        alert('Por favor, selecione uma imagem nos formatos JPEG ou PNG.')
-        event.target.value = '' // Reseta o campo de input
+        setImagemErro(true)
+        setImagemBase64('')
+        event.target.value = ''
+        alert('Por favor, selecione uma imagem nos formatos JPEG, JPG ou PNG.')
       }
     } else {
       console.log('Nenhum arquivo selecionado')
@@ -71,6 +76,14 @@ export default function Cadastro() {
         validacao.error.errors[0]?.message ||
         'Erro nos dados. Verifique as informações e tente novamente.'
       setMessage(firstError)
+      return
+    }
+
+    const nascimentoDate = new Date(nascimento)
+    const hoje = new Date()
+    const idade = hoje.getFullYear() - nascimentoDate.getFullYear()
+    if(idade >= 130){
+      setMessage("Data de usuário muito antiga")
       return
     }
 
@@ -162,11 +175,20 @@ export default function Cadastro() {
           <CheckInput
             type="file"
             id="imagens"
-            accept="image/*"
+            accept=".jpg, .jpeg, .png"
             onChange={handleImageChange}
             required
           />
         </Campo>
+        {imagemErro ? (
+          <ErrorImage src="/images/error.png" alt="Imagem inválida" />
+        ) : (
+          imagemBase64.length > 0 && (
+            <div style={{ display: 'flex', gap: '10px', flexWrap: 'wrap' }}>
+              <ProductImage src={imagemBase64} alt={`Foto de perfil`} />
+            </div>
+          )
+         )}
         {message && (
           <p style={{ color: 'red', textAlign: 'center' }}>{message}</p>
         )}

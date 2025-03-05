@@ -150,3 +150,32 @@ export const TermsText = styled('p', {
     },
   },
 })
+
+export const ErrorImage = styled('img', {
+  width: '150px',
+  height: '150px',
+  objectFit: 'contain',
+  borderRadius: '8px',
+  margin: '10px auto',
+  border: '2px solid $ignite500',
+  padding: '5px',
+  boxShadow: '0 2px 10px rgba(0,0,0,0.1)',
+  backgroundColor: '$gray800',
+})
+
+export const ProductImage = styled('img', {
+  width: '150px',
+  height: '150px',
+  objectFit: 'cover',
+  borderRadius: '8px',
+  margin: '5px auto',
+  border: '2px solid $gray500',
+  padding: '5px',
+  boxShadow: '0 2px 10px rgba(0,0,0,0.1)',
+  cursor: 'pointer',
+  transition: 'transform 0.2s ease-in-out',
+
+  '&:hover': {
+    transform: 'scale(1.05)',
+  },
+})

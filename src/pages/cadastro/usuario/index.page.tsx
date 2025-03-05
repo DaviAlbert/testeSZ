@@ -17,9 +17,11 @@ import {
   CheckInput,
   UploadButton,
   ProductImage,
+  ErrorImage,
 } from './style'
 
-export default function AddProduct() {
+// funcção principal de adicionar usuários
+export default function AddUser() {
   const [isLoggedIn, setIsLoggedIn] = useState(false)
   const [isAdmin, setIsAdmin] = useState(false)
   const [userName, setUserName] = useState<string | null>(null)
@@ -33,6 +35,7 @@ export default function AddProduct() {
   const [admin, setAdmin] = useState(false)
   const [loading, setLoading] = useState(false)
   const [message, setMessage] = useState('')
+  const [imagemErro, setImagemErro] = useState(false)
 
   const router = useRouter()
 
@@ -70,6 +73,7 @@ export default function AddProduct() {
     }
   }
 
+  // Recebe a imagem, garante que seja imagem e envia para converção para base64
   const handleImageChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     if (event.target.files && event.target.files.length > 0) {
       const file = event.target.files[0]
@@ -78,15 +82,17 @@ export default function AddProduct() {
       if (fileType === 'image/jpeg' || fileType === 'image/png') {
         convertImageToBase64(file)
       } else {
-        alert('Por favor, selecione uma imagem nos formatos JPEG ou PNG.')
-        event.target.value = '' // Reseta o campo de input
+        setImagemErro(true)
+        setImagemBase64('')
+        event.target.value = ''
+        alert('Por favor, selecione uma imagem nos formatos JPEG. JPG ou PNG.')
       }
     } else {
       console.log('Nenhum arquivo selecionado')
     }
   }
 
-  // Validação e envio do formulário
+  // Validação de informações e envio do formulário
   const handleSubmit = async (event: React.FormEvent) => {
     event.preventDefault()
     setLoading(true)
@@ -212,15 +218,19 @@ export default function AddProduct() {
               <CheckInput
                 type="file"
                 id="fotosOpcionais"
-                accept="image/*"
+                accept=".jpg, .jpeg, .png"
                 multiple
                 onChange={handleImageChange}
               />
             </Campo>
-            {imagemBase64.length > 0 && (
-              <div style={{ display: 'flex', gap: '10px', flexWrap: 'wrap' }}>
+            {imagemErro ? (
+              <ErrorImage src="/images/error.png" alt="Imagem inválida" />
+            ) : (
+              imagemBase64.length > 0 && (
+                <div style={{ display: 'flex', gap: '10px', flexWrap: 'wrap' }}>
                   <ProductImage src={imagemBase64} alt={`Foto de perfil`} />
-              </div>
+                </div>
+              )
             )}
             {message && <p>{message}</p>}
             <div>

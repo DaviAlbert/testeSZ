@@ -25,7 +25,7 @@ export default function AddProduct() {
   const [descricao, setDescricao] = useState('')
   const [quantidade, setQuantidade] = useState(1)
   const [preco, setPreco] = useState('')
-  const [fotoPrincipalBase64, setFotoPrincipalBase64] = useState<string | null>(null)
+  const [fotoPrincipalBase64, setFotoPrincipalBase64] = useState<string>('')
   const [fotosOpcionaisBase64, setFotosOpcionaisBase64] = useState<string[]>([])
   const [loading, setLoading] = useState(false)
   const [message, setMessage] = useState('')
@@ -53,45 +53,12 @@ export default function AddProduct() {
   }, [router])
 
   // Função para reduzir e converter imagem para Base64
-  const resizeAndConvertToBase64 = (file: File): Promise<string> => {
+  const convertImageToBase64 = (file: File): Promise<string> => {
     return new Promise((resolve, reject) => {
       const reader = new FileReader()
       reader.readAsDataURL(file)
-      reader.onload = (event) => {
-        const img = new Image()
-        img.src = event.target?.result as string
-
-        img.onload = () => {
-          const canvas = document.createElement('canvas')
-          const ctx = canvas.getContext('2d')
-
-          if (!ctx) return reject(new Error('Erro ao processar imagem.'))
-
-          const maxWidth = 800
-          const maxHeight = 800
-
-          let width = img.width
-          let height = img.height
-
-          if (width > maxWidth || height > maxHeight) {
-            if (width > height) {
-              height *= maxWidth / width
-              width = maxWidth
-            } else {
-              width *= maxHeight / height
-              height = maxHeight
-            }
-          }
-
-          canvas.width = width
-          canvas.height = height
-          ctx.drawImage(img, 0, 0, width, height)
-
-          // Comprime e converte para Base64
-          resolve(canvas.toDataURL('image/jpeg', 0.7)) // Qualidade 70%
-        }
-      }
-      reader.onerror = (error) => reject(error)
+      reader.onloadend = () => resolve(reader.result as string)
+      reader.onerror = reject
     })
   }
 
@@ -105,8 +72,13 @@ export default function AddProduct() {
         return
       }
 
+      if (!['image/jpeg', 'image/png'].includes(file.type)) {
+        setMessage('Somente imagens JPG ou PNG são permitidas!')
+        return
+      }
+
       try {
-        const base64 = await resizeAndConvertToBase64(file)
+        const base64 = await convertImageToBase64(file)
         setFotoPrincipalBase64(base64)
       } catch (error) {
         console.error('Erro ao converter imagem para Base64:', error)
@@ -127,7 +99,7 @@ export default function AddProduct() {
       setMessage('')
 
       try {
-        const base64Images = await Promise.all(fileArray.map((file) => resizeAndConvertToBase64(file)))
+        const base64Images = await Promise.all(fileArray.map((file) => convertImageToBase64(file)))
         setFotosOpcionaisBase64([...fotosOpcionaisBase64, ...base64Images])
       } catch (error) {
         console.error('Erro ao converter imagens opcionais para Base64:', error)
@@ -179,7 +151,7 @@ export default function AddProduct() {
         setDescricao('')
         setQuantidade(1)
         setPreco('')
-        setFotoPrincipalBase64(null)
+        setFotoPrincipalBase64('')
         setFotosOpcionaisBase64([])
         setTimeout(() => router.push('/catalogo'), 1000)
       } else {
@@ -259,7 +231,7 @@ export default function AddProduct() {
               <CheckInput
                 type="file"
                 id="fotoPrincipal"
-                accept="image/*"
+                accept=".jpg, .jpeg, .png"
                 onChange={handleFotoPrincipalChange}
                 required
               />
@@ -274,7 +246,7 @@ export default function AddProduct() {
               <CheckInput
                 type="file"
                 id="fotosOpcionais"
-                accept="image/*"
+                accept=".jpg, .jpeg, .png"
                 multiple
                 onChange={handleFotosOpcionaisChange}
               />

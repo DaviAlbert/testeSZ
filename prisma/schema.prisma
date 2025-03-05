@@ -5,6 +5,7 @@ generator client {
 datasource db {
   provider = "sqlite"
   url      = env("DATABASE_URL")
+  shadowDatabaseUrl = env("SHADOW_DATABASE_URL")
 }
 
 model User {
@@ -13,13 +14,14 @@ model User {
   name       String
   password   String
   admin      Boolean
-  photo       String 
-  phone   String
-  birthday DateTime
+  photo      String 
+  phone      String
+  birthday   DateTime
   created_at DateTime @default(now())
   updated_at DateTime @updatedAt
 
   carrinho   Carrinho?
+  pedidos    Pedido[]
 
   @@map("users")
   @@index([email])
@@ -33,17 +35,17 @@ model Produto {
   preco         Float
   quantidade    Int
   fotoPrincipal String
-  created_at DateTime @default(now())
-  updated_at DateTime @updatedAt
+  created_at    DateTime @default(now())
+  updated_at    DateTime @updatedAt
 
   imagens       Imagem[] @relation("ProdutoImagens")
   carrinhos     CarrinhoProduto[]
+  pedidos       PedidoProduto[]
 
   @@map("produto")
   @@index([preco])
   @@index([quantidade])
 }
-
 
 model Imagem {
   id         String   @id @default(uuid())
@@ -60,9 +62,9 @@ model Imagem {
 
 model Carrinho {
   id         String     @id @default(uuid())
-  idUsuario  String     @unique
-  created_at DateTime @default(now())
-  updated_at DateTime @updatedAt
+  idUsuario  String @unique
+  created_at DateTime   @default(now())
+  updated_at DateTime   @updatedAt
 
   user       User       @relation(fields: [idUsuario], references: [id])
   produtos   CarrinhoProduto[]
@@ -75,8 +77,8 @@ model CarrinhoProduto {
   idCarrinho  String
   idProduto   String
   quantidade  Int      @default(1)
-  created_at DateTime @default(now())
-  updated_at DateTime @updatedAt
+  created_at  DateTime @default(now())
+  updated_at  DateTime @updatedAt
 
   carrinho    Carrinho @relation(fields: [idCarrinho], references: [id], onDelete: Cascade)
   produto     Produto  @relation(fields: [idProduto], references: [id], onDelete: Cascade)
@@ -84,4 +86,35 @@ model CarrinhoProduto {
   @@id([idCarrinho, idProduto])
   @@map("carrinho_produto")
   @@index([idCarrinho, idProduto])
+}
+
+model Pedido {
+  id         String     @id @default(uuid())
+  idUsuario  String
+  created_at DateTime   @default(now())
+  updated_at DateTime   @updatedAt
+
+  produtos   PedidoProduto[]
+
+  user       User       @relation(fields: [idUsuario], references: [id])
+
+  @@map("pedido")
+  @@index([id])
+  @@index([idUsuario])
+  @@index([created_at]) // Índice para buscas rápidas por data
+}
+
+model PedidoProduto {
+  idPedido   String
+  idProduto  String
+  quantidade Int      @default(1)
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
+
+  pedido     Pedido   @relation(fields: [idPedido], references: [id], onDelete: Cascade)
+  produto    Produto  @relation(fields: [idProduto], references: [id], onDelete: Cascade)
+
+  @@id([idPedido, idProduto])
+  @@map("pedido_produto")
+  @@index([idPedido, idProduto])
 }

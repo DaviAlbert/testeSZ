@@ -249,3 +249,37 @@ export const CarrinhoContainer = styled('div', {
   flexDirection: 'column',
   animation: `${slideIn} 0.3s ease-out`,
 });
+
+export const PaginationContainer = styled('div', {
+  display: 'flex',
+  justifyContent: 'center',
+  alignItems: 'center',
+  marginTop: '$6',
+  gap: '8px',
+});
+
+export const PageButton = styled('button', {
+  backgroundColor: '$gray700',
+  color: '$gray100',
+  padding: '8px 16px',
+  borderRadius: '5px',
+  border: 'none',
+  cursor: 'pointer',
+  fontSize: '16px',
+  transition: 'background 0.3s',
+
+  '&:hover': {
+    backgroundColor: '$ignite500',
+  },
+
+  '&.active': {
+    backgroundColor: '$ignite500',
+    fontWeight: 'bold',
+  },
+});
+
+export const Ellipsis = styled('span', {
+  fontSize: '16px',
+  color: '$gray300',
+  padding: '8px 16px',
+});

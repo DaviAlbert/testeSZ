@@ -53,7 +53,7 @@ export default async function handler(
     const carrinhoProduto = await prisma.carrinhoProduto.findUnique({
       where: {
         idCarrinho_idProduto: {
-          idCarrinho: carrinho.id,
+          idCarrinho: carrinho!.id,
           idProduto: produtoId,
         },
       },
@@ -64,7 +64,7 @@ export default async function handler(
       await prisma.carrinhoProduto.update({
         where: {
           idCarrinho_idProduto: {
-            idCarrinho: carrinho.id,
+            idCarrinho: carrinho!.id,
             idProduto: produtoId,
           },
         },
@@ -76,7 +76,7 @@ export default async function handler(
       // Adiciona o produto ao carrinho
       await prisma.carrinhoProduto.create({
         data: {
-          idCarrinho: carrinho.id,
+          idCarrinho: carrinho!.id,
           idProduto: produtoId,
           quantidade,
         },

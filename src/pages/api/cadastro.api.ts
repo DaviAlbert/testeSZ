@@ -19,7 +19,7 @@ export default async function handler(
   }
 
   try {
-    const hashedPassword = await bcrypt.hash(senha, 10)
+    const hashedPassword = await bcrypt.hash(senha, 12)
 
     const user = await prisma.user.create({
       data: {

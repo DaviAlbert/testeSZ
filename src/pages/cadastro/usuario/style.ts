@@ -265,3 +265,15 @@ export const UploadButton = styled('label', {
     display: 'none',
   },
 })
+
+export const ErrorImage = styled('img', {
+  width: '150px',
+  height: '150px',
+  objectFit: 'contain',
+  borderRadius: '8px',
+  margin: '10px auto',
+  border: '2px solid $ignite500',
+  padding: '5px',
+  boxShadow: '0 2px 10px rgba(0,0,0,0.1)',
+  backgroundColor: '$gray800',
+})

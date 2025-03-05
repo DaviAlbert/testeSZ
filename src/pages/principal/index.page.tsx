@@ -52,6 +52,7 @@ export default function Home() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [admin, setAdmin] = useState(false);
   const [totalCarrinho, setTotalCarrinho] = useState(0);
+  const [id, setId] = useState('');
   const [quantidades] = useState<number[]>([])
   const [userName, setUserName] = useState<string | null>(null);
   const [produtosCarrinho, setProdutosCarrinho] = useState<ProdutoCarrinho[]>([]);
@@ -74,6 +75,7 @@ export default function Home() {
           tokenObject.current = parsedToken.data;
           setIsLoggedIn(true);
           setAdmin(!!parsedToken.data.admin);
+          setId(parsedToken.data.id)
           setUserName(parsedToken.data.name || 'Usuário');
         } else {
           console.error('Token inválido:', parsedToken.error);
@@ -111,7 +113,7 @@ export default function Home() {
   useEffect(() => {
     const fetchProdutos = async () => {
       try {
-        const response = await fetch('/api/produtos');
+        const response = await fetch('/api/produtosPrincipal');
         const data = await response.json();
         setProdutos(data);
       } catch (error) {
@@ -124,6 +126,17 @@ export default function Home() {
 
   const sendOrderEmail = async () => {
     try {
+
+      // Chama a primeira API para criar o pedido após adicionar o produto ao carrinho
+      await fetch('http://localhost:3000/api/pedidos/criar', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ userId: id }),
+      })
+
+      // Chama a primeira API para criar o pedido após adicionar o produto ao carrinho
       const response = await fetch('/api/sendAdminEmail', {
         method: 'GET',
         headers: { 'Content-Type': 'application/json' },
@@ -150,7 +163,6 @@ export default function Home() {
       });
   
       await Promise.all(emailPromises);
-      console.log("✅ Emails enviados com sucesso!");
   
       // 🔴 NOVA PARTE: Limpar o carrinho no backend
       if (tokenObject.current.id) {

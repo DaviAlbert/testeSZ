@@ -21,6 +21,9 @@ import {
   Fechar,
   SearchInput,
   QuantidadeCarinho,
+  PaginationContainer,
+  PageButton,
+  Ellipsis,
 } from './style'
 import Header from '../../componentes/header'
 import Footer from '../../componentes/footer'
@@ -54,13 +57,16 @@ export default function Home() {
   const [selectedQuantity, setSelectedQuantity] = useState(1)
   const [isLoggedIn, setIsLoggedIn] = useState(false)
   const [totalCarrinho, setTotalCarrinho] = useState(0);
+  const [id, setId] = useState('');
   const [userName, setUserName] = useState<string | null>(null)
-  const [produtosCarrinho, setProdutosCarrinho] = useState<ProdutoCarrinho[]>(
-    [],
-  )
+  const [paginaAtual, setPaginaAtual] = useState(1);
+  const [itensPorPagina, setItensPorPagina] = useState(15);
   const [isCartOpen, setIsCartOpen] = useState(false)
   const tokenObject = useRef<{ admin?: boolean; id?: string; name?: string }>(
     {},
+  )
+  const [produtosCarrinho, setProdutosCarrinho] = useState<ProdutoCarrinho[]>(
+    [],
   )
 
   useEffect(() => {
@@ -83,6 +89,7 @@ export default function Home() {
           tokenObject.current = parsedToken.data
           setIsLoggedIn(true)
           setUserName(parsedToken.data.name || 'Usuário')
+          setId(parsedToken.data.id)
         } else {
           console.error('Token inválido:', parsedToken.error)
           router.push('/')
@@ -109,28 +116,39 @@ export default function Home() {
     }
   }, [tokenObject.current])
 
-  useEffect(() => {
-    const fetchProdutos = async () => {
-      try {
-        const response = await fetch('/api/produtos')
-        const data = await response.json()
-          const produtosFormatados = data.map((produto) => ({
-            ...produto,
-            imagens: produto.fotosOpcionais ?? [],
-          }));
-        
-          setProdutos(produtosFormatados);
-        
-      } catch (error) {
-        console.error('Erro ao buscar produtos:', error)
-      }
+useEffect(() => {
+  const fetchProdutos = async () => {
+    try {
+      const response = await fetch(`/api/produtos?pagina=${paginaAtual}&limite=${itensPorPagina}`);
+      const data = await response.json();
+      const produtosFormatados = data.map((produto) => ({
+        ...produto,
+        imagens: produto.imagens ?? [],
+      }));
+      console.log('Dados recebidos:', data);
+      setProdutos(produtosFormatados);
+    } catch (error) {
+      console.error('Erro ao buscar produtos:', error);
     }
-    fetchProdutos()
-  }, [])
+  };
+  fetchProdutos();
+}, [paginaAtual, itensPorPagina]);
+
 
   const sendOrderEmail = async () => {
     try {
-      // Chama a API para pegar todos os e-mails dos administradores
+
+      // Chama a primeira API para criar o pedido após adicionar o produto ao carrinho
+      const resultado = await fetch('http://localhost:3000/api/pedidos/criar', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ userId: id }),
+      })
+      console.log(resultado)
+
+      // Chama a segunda API para pegar todos os e-mails dos administradores
       const response = await fetch('/api/sendAdminEmail', {
         method: 'GET',
         headers: {
@@ -162,9 +180,17 @@ export default function Home() {
   
       // Aguarda o envio de todos os e-mails
       await Promise.all(emailPromises);
+
+      if (tokenObject.current.id) {
+        await fetch('/api/carrinho/limpar', {
+          method: 'DELETE',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ userId: tokenObject.current.id }),
+        });
+      }
   
-      console.log("✅ Emails enviados com sucesso!");
-      alert("E-mails enviados com sucesso!");
+      setProdutosCarrinho([]);
+      alert("Compra finalizada! Seu carrinho foi esvaziado.");
     } catch (error) {
       console.error("❌ Erro ao enviar e-mails:", error);
       alert("Erro ao enviar e-mails.");
@@ -221,7 +247,6 @@ export default function Home() {
         quantidade: selectedQuantity,
       }),
     });
-  
     if (response.ok) {
       setProdutosCarrinho((prevCarrinho) => {
         const produtoExistente = prevCarrinho.find((p) => p.id === produtoId);
@@ -302,115 +327,154 @@ export default function Home() {
         .includes(produtoPesquisa.toLowerCase()),
   )
 
+  const totalPages = Math.ceil(filteredProdutos.length / itensPorPagina);
+
   return (
-    <>
-      <Header
-        isLoggedIn={isLoggedIn}
-        userName={userName}
-        toggleCart={toggleCart}
-        Itens={produtosCarrinho.length}
-        Admin={tokenObject.current.admin ?? false}
+  <>
+    <Header
+      isLoggedIn={isLoggedIn}
+      userName={userName}
+      toggleCart={toggleCart}
+      Itens={produtosCarrinho.length}
+      Admin={tokenObject.current.admin ?? false}
+    />
+
+    <Nav>
+      <a href="/">PRODUTOS</a>
+      <SearchInput
+        type="text"
+        placeholder="Pesquise produtos..."
+        value={produtoPesquisa}
+        onChange={(e) => setProdutoPesquisa(e.target.value)}
       />
+    </Nav>
 
-      <Nav>
-        <a href="/">PRODUTOS</a>
-        <SearchInput
-          type="text"
-          placeholder="Pesquise produtos..."
-          value={produtoPesquisa}
-          onChange={(e) => setProdutoPesquisa(e.target.value)}
-        />
-      </Nav>
+    {isCartOpen && (
+      <>
+        <Backdrop onClick={toggleCart} />
+        <CarrinhoContainer className={isCartOpen ? 'open' : 'closed'}>
+          <Fechar onClick={toggleCart}>✖</Fechar>
 
-      {isCartOpen && (
-        <>
-          <Backdrop onClick={toggleCart} />
-          <CarrinhoContainer className={isCartOpen ? 'open' : 'closed'}>
-            <Fechar onClick={toggleCart}>✖</Fechar>
-
-            {produtosCarrinho.length > 0 ? (
-              produtosCarrinho.map((produto, index) => (
-                <Produto key={index}>
-                  <div>
-                    <h3 style={{ color: '#fff', marginBottom: '5px' }}>
-                      {produto.name}
-                    </h3>
-                    <p>R$ {produto.preco.toFixed(2).replace('.', ',')}</p>
-                    <Adicionado>
+          {produtosCarrinho.length > 0 ? (
+            produtosCarrinho.map((produto, index) => (
+              <Produto key={index}>
+                <div>
+                  <h3 style={{ color: '#fff', marginBottom: '5px' }}>
+                    {produto.name}
+                  </h3>
+                  <p>R$ {produto.preco.toFixed(2).replace('.', ',')}</p>
+                  <Adicionado>
                     <p>Qtd: </p>
                     <QuantidadeCarinho
                       type="number"
                       min="1"
                       max={quantidades[produtos.indexOf(selectedProduct!)]}
                       value={produto.quantidade}
-                      onChange={(e) => handleUpdateQuantity(produto.id, Number(e.target.value))}
+                      onChange={(e) =>
+                        handleUpdateQuantity(produto.id, Number(e.target.value))
+                      }
                     />
-                    </Adicionado>
-                  </div>
-                  <button onClick={() => handleRemoveFromCart(produto.id)}>🗑️</button>
-                </Produto>
-              ))
-            ) : (
-              <p>Seu carrinho está vazio.</p>
-            )}
+                  </Adicionado>
+                </div>
+                <button onClick={() => handleRemoveFromCart(produto.id)}>
+                  🗑️
+                </button>
+              </Produto>
+            ))
+          ) : (
+            <p>Seu carrinho está vazio.</p>
+          )}
 
-            <h3>Total: R$ {totalCarrinho.toFixed(2).replace('.', ',')}</h3>
-            <FinalizarCompra onClick={sendOrderEmail}>Finalizar Compra</FinalizarCompra>
-          </CarrinhoContainer>
-        </>
-      )}
+          <h3>Total: R$ {totalCarrinho.toFixed(2).replace('.', ',')}</h3>
+          <FinalizarCompra onClick={sendOrderEmail}>Finalizar Compra</FinalizarCompra>
+        </CarrinhoContainer>
+      </>
+    )}
 
-      <Container>
-        <ProductList>
-          {filteredProdutos.map((produto) => (
-            <ProductCard key={produto.id}>
-              <Item onClick={() => handleClickProduto(produto.id)}>
-                {produto.name}
-              </Item>
-              {produto.fotoPrincipal != null && (
-                <ProductImage
-                  src={produto.fotoPrincipal} 
-                  alt={produto.name}
-                />
-              )}
-              <div onClick={() => handleClickProduto(produto.id)}>
-                <Item>{produto.descricao}</Item>
-                <Item>Preço: {produto.preco}</Item>
-                <Item>Quantidade disponível: {produto.quantidade}</Item>
-              </div>
-              <AddToCartButton onClick={() => handleAddToCart(produto)}>
-                Adicionar no carrinho
-              </AddToCartButton>
-            </ProductCard>
-          ))}
-        </ProductList>
-      </Container>
-
-      {modalVisible && selectedProduct && (
-        <ModalOverlay>
-          <Modal>
-            <ModalContent>
-              <h3>{`Escolha a quantidade de ${selectedProduct.name}`}</h3>
-              <Quantidade
-                type="number"
-                min="1"
-                max={quantidades[produtos.indexOf(selectedProduct)]}
-                value={selectedQuantity}
-                onChange={(e) => setSelectedQuantity(Number(e.target.value))}
+    <Container>
+      <ProductList>
+        {filteredProdutos.slice((paginaAtual - 1) * itensPorPagina, paginaAtual * itensPorPagina).map((produto) => (
+          <ProductCard key={produto.id}>
+            <Item onClick={() => handleClickProduto(produto.id)}>
+              {produto.name}
+            </Item>
+            {produto.fotoPrincipal != null && (
+              <ProductImage
+                src={produto.fotoPrincipal}
+                alt={produto.name}
               />
-              <div>
-                <AddToCartButton onClick={() => setModalVisible(false)}>
-                  Cancelar
-                </AddToCartButton>
-                <AddToCartButton onClick={handleConfirmAddToCart}>
-                  Confirmar
-                </AddToCartButton>
-              </div>
-            </ModalContent>
-          </Modal>
-        </ModalOverlay>
-      )}
-      <Footer />
-    </>
+            )}
+            <div onClick={() => handleClickProduto(produto.id)}>
+              <Item>{produto.descricao}</Item>
+              <Item>Preço: {produto.preco}</Item>
+              <Item>Quantidade disponível: {produto.quantidade}</Item>
+            </div>
+            <AddToCartButton onClick={() => handleAddToCart(produto)}>
+              Adicionar no carrinho
+            </AddToCartButton>
+          </ProductCard>
+        ))}
+      </ProductList>
+      <PaginationContainer>
+        {paginaAtual > 1 && (
+          <PageButton onClick={() => setPaginaAtual(paginaAtual - 1)}>{"<"}</PageButton>
+        )}
+        {paginaAtual > 3 && <Ellipsis>...</Ellipsis>}
+
+        {[...Array(totalPages)].map((_, index) => {
+          const pageNumber = index + 1;
+          if (
+            pageNumber === 1 ||
+            pageNumber === totalPages ||
+            (pageNumber >= paginaAtual - 1 && pageNumber <= paginaAtual + 1)
+          ) {
+            return (
+              <PageButton
+                key={pageNumber}
+                onClick={() => setPaginaAtual(pageNumber)}
+                className={paginaAtual === pageNumber ? 'active' : ''}
+              >
+                {pageNumber}
+              </PageButton>
+            );
+          }
+          return null;
+        })}
+
+        {paginaAtual < totalPages - 2 && <Ellipsis>...</Ellipsis>}
+
+        {paginaAtual < totalPages && (
+          <PageButton onClick={() => setPaginaAtual(paginaAtual + 1)}>{">"}</PageButton>
+        )}
+      </PaginationContainer>
+    </Container>
+
+    {modalVisible && selectedProduct && (
+      <ModalOverlay>
+        <Modal>
+          <ModalContent>
+            <h3>{`Escolha a quantidade de ${selectedProduct.name}`}</h3>
+            <Quantidade
+              type="number"
+              min="1"
+              max={quantidades[produtos.indexOf(selectedProduct)]}
+              value={selectedQuantity}
+              onChange={(e) => setSelectedQuantity(Number(e.target.value))}
+            />
+            <div>
+              <AddToCartButton onClick={() => setModalVisible(false)}>
+                Cancelar
+              </AddToCartButton>
+              <AddToCartButton onClick={handleConfirmAddToCart}>
+                Confirmar
+              </AddToCartButton>
+            </div>
+          </ModalContent>
+        </Modal>
+      </ModalOverlay>
+    )}
+
+    <Footer />
+  </>
   )
 }
