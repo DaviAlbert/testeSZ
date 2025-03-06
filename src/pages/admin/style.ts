@@ -30,6 +30,11 @@ export const Grid = styled('div', {
   display: 'flex',
   justifyContent: 'space-around',
   marginTop: '20px',
+  marginBottom: '20px',
+
+  p: {
+    color: '$ignite300', 
+  },
 
   '@media (max-width: 600px)': {
     flexDirection: 'column',
@@ -98,6 +103,7 @@ export const Button = styled('button', {
   cursor: 'pointer',
   transition: 'background 0.2s',
   margin: '50px 5px 0px',
+  boxShadow: '0 2px 4px rgba(0, 0, 0, 0.4)',
 
   '&:hover': {
     backgroundColor: '$ignite300',

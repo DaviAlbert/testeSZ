@@ -24,12 +24,8 @@ export default function ProdutoDetalhado() {
   const { id } = router.query
   const [produto, setProduto] = useState<Produto | null>(null)
   const [isAdmin, setIsAdmin] = useState(false)
-  const [editando, setEditando] = useState(false)
   const [isLoggedIn, setIsLoggedIn] = useState(false)
-  const [name, setName] = useState('')
-  const [descricao, setDescricao] = useState('')
-  const [preco, setPreco] = useState(0)
-  const [quantidade, setQuantidade] = useState(0)
+  const [username, setUsername] = useState('')
 
   // Busca o produto via API ao carregar a página através do ID
   useEffect(() => {
@@ -41,10 +37,6 @@ export default function ProdutoDetalhado() {
         if (!response.ok) throw new Error('Produto não encontrado')
         const data: Produto = await response.json()
         setProduto(data)
-        setName(data.name)
-        setDescricao(data.descricao)
-        setPreco(data.preco)
-        setQuantidade(data.quantidade)
       } catch (error) {
         console.error(error)
         alert('Erro ao buscar produto')
@@ -60,42 +52,19 @@ export default function ProdutoDetalhado() {
     if (userCookie) {
       const user = JSON.parse(userCookie)
       setIsLoggedIn(true)
+      setUsername(user.name)
       setIsAdmin(user.admin)
 
       if(isAdmin){
-        alert('Usuário não é administrador.')
         router.push('/catalogo')
       }
     } else {
-      alert('Token não encontrado, faça login.')
       router.push('/login')
     }
   }, [router])
 
-  // Função para salvar alterações, enviando para a API
-  const handleSave = async () => {
-    if (!produto) return
-
-    try {
-      const response = await fetch(`/api/editarProduto/${produto.id}`, {
-        method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ name, descricao, preco, quantidade })
-      })
-
-      if (response.ok) {
-        const updatedProduto = await response.json()
-        setProduto(updatedProduto)
-        setEditando(false)
-        alert('Produto atualizado com sucesso!')
-        router.reload()
-      } else {
-        throw new Error('Erro ao atualizar produto')
-      }
-    } catch (error) {
-      console.error('Erro ao salvar:', error)
-      alert('Erro ao salvar as alterações.')
-    }
+  const setRota = (id: string) => {
+    router.push(`/editar/produto/${id}`)
   }
 
   // Função para deletar um produto, enviando para a API
@@ -132,7 +101,7 @@ export default function ProdutoDetalhado() {
 
   return (
     <>
-      <Header isLoggedIn={isLoggedIn} userName={name} Itens={-1} Admin={isAdmin} />
+      <Header isLoggedIn={isLoggedIn} userName={username} Itens={-1} Admin={isAdmin} />
       <Container>
         <h1>{produto.name}</h1>
         <div style={{ width: '50%', minWidth: '300px', margin: 'auto' }}>
@@ -150,60 +119,16 @@ export default function ProdutoDetalhado() {
             ))}
           </Slider>
         </div>
-
-        {!editando ? (
-          <>
-            <p><strong>Descrição:</strong> {produto.descricao}</p>
-            <p><strong>Preço:</strong> R$ {produto.preco.toFixed(2)}</p>
-            <p><strong>Quantidade disponível:</strong> {produto.quantidade}</p>
-          </>
-        ) : (
-          <>
-            <Input
-              type="text"
-              value={name}
-              onChange={(e) => setName(e.target.value)}
-              placeholder="Nome"
-            />
-            <Input
-              value={descricao}
-              onChange={(e) => setDescricao(e.target.value)}
-              placeholder="Descrição"
-            />
-            <Input
-              type="number"
-              value={preco}
-              onChange={(e) => setPreco(Number(e.target.value))}
-              placeholder="Preço"
-            />
-            <Input
-              type="number"
-              value={quantidade}
-              onChange={(e) => setQuantidade(Number(e.target.value))}
-              placeholder="Preço"
-            />
-          </>
-        )}
+        <p><strong>Descrição:</strong> {produto.descricao}</p>
+        <p><strong>Preço:</strong> R$ {produto.preco.toFixed(2)}</p>
+        <p><strong>Quantidade disponível:</strong> {produto.quantidade}</p>
 
         {isAdmin && (
           <div>
-            {!editando ? (
-              <>
-                <Button onClick={() => setEditando(true)}>Editar</Button>
-                <Button onClick={handleDelete} style={{ background: 'red' }}>
-                  Excluir
-                </Button>
-              </>
-            ) : (
-              <>
-                <Button onClick={handleSave} style={{ background: 'green' }}>
-                  Salvar
-                </Button>
-                <Button onClick={() => setEditando(false)} style={{ background: 'gray' }}>
-                  Cancelar
-                </Button>
-              </>
-            )}
+            <Button onClick={() => setRota(produto.id)}>Editar</Button>
+            <Button onClick={handleDelete} style={{ background: 'red' }}>
+              Excluir
+            </Button>
           </div>
         )}
       </Container>

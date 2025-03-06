@@ -1,6 +1,7 @@
 import { useEffect, useState, useRef } from 'react'
 import { useRouter } from 'next/router'
 import Cookies from 'js-cookie'
+import DataTable from "react-data-table-component";
 import {
   AddToCartButton,
   Container,

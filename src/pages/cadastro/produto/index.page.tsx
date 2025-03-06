@@ -67,7 +67,7 @@ export default function AddProduct() {
     if (event.target.files && event.target.files.length > 0) {
       const file = event.target.files[0]
 
-      if (file.size > 5000000) { // 5MB limite
+      if (file.size > 5000000) {
         setMessage('A imagem é muito grande! Escolha uma menor que 5MB.')
         return
       }
@@ -127,10 +127,8 @@ export default function AddProduct() {
       fotoPrincipal: fotoPrincipalBase64,
       fotosOpcionais: fotosOpcionaisBase64,
     }
-    console.log(produtoData)
 
     const validacao = ProdutoSchema.safeParse(produtoData)
-    console.log(validacao)
 
     if (!validacao.success) {
       setMessage(validacao.error.errors[0]?.message || 'Erro nos dados do produto.')

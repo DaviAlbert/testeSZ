@@ -63,3 +63,11 @@ Confira nossa [documentação de implantação do Next.js](https://nextjs.org/do
 ✅ Tela de Catálogo  
 ✅ Tela Inicial  
 ✅ Tela de Administrador  
+
+## Correções de erros:
+ ✅ gridDatatable
+ ✅ paginação
+ ✅ não necessitar o recarregamento de imagens
+ ✅ Upload de imagens
+ ✅ utilização do redux
+ ✅ tabela de pedidos e itens dos pedidos
