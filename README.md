@@ -2,21 +2,32 @@ Este é um projeto [Next.js](https://nextjs.org) inicializado com [`create-next-
 
 ## Começando  
 
-Primeiro, execute o servidor de desenvolvimento:
+Primeiro vá para a pasta `/testesz/prisma` no CMD e execute:
+```bash
+npx prisma generate
+```
+
+Depois volte para a pasta `/testesz` e execute o servidor de desenvolvimento no CMD:
 
 ```bash
 npm run dev
-# ou
+```
+ou
+```bash
 yarn dev
-# ou
+```
+ou
+```bash
 pnpm dev
-# ou
+```
+ou
+```bash
 bun dev
 ```
 
-Abra o link mostrado no cmd no seu navegador para ver o resultado.
+Abra o link mostrado no cmd no seu navegador para ver o resultado (Normalmente é: https:://localhost:3000).
 
-Você pode começar a editar a página modificando `app/page.tsx`. A página é atualizada automaticamente conforme você edita o arquivo.
+Você pode começar a editar a página modificando `testesz/src/pages`. As páginas são automaticamente atualizadas conforme você edita os arquivos.
 
 Este projeto usa [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) para otimizar e carregar automaticamente a fonte [Geist](https://vercel.com/font), uma nova família tipográfica da Vercel.
 
