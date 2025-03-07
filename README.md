@@ -2,12 +2,21 @@ Este é um projeto [Next.js](https://nextjs.org) inicializado com [`create-next-
 
 ## Começando  
 
-Primeiro vá para a pasta `/testesz/prisma` no CMD e execute:
+Primeiro, na pasta `/testesz`, execute o comando no CMD: 
+```bash
+npm i --force
+```
+ou
+```bash
+npm install --force
+```
+
+Após isso, vá para a pasta `/testesz/prisma` no CMD e execute:
 ```bash
 npx prisma generate
 ```
 
-Depois volte para a pasta `/testesz` e execute o servidor de desenvolvimento no CMD:
+Depois volte para a pasta `/testesz` e execute o servidor de desenvolvimento no CMD com o segunte comando:
 
 ```bash
 npm run dev
