@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import React, { useState } from 'react'
 import Cookies from 'js-cookie'
 import { useRouter } from 'next/router'
 import { CadastroSchema } from '../../componentes/schema/schemas'

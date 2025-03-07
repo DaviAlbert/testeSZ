@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import React, { useState, useEffect } from 'react'
 import Cookies from 'js-cookie'
 import {
   Container,
@@ -10,6 +10,7 @@ import {
   File,
   Foto,
 } from './style'
+import Image from 'next/image'
 import Header from '../../componentes/header'
 import Footer from '../../componentes/footer'
 
@@ -96,10 +97,12 @@ export default function Perfil() {
         <ProfileCard>
           <Foto>
           {foto ? (
-            <img
+            <Image
               src={foto}
               alt="Foto de perfil"
-              style={{ width: '100px', height: '100px', borderRadius: '50%', marginBottom: 10 }}
+              width={100}
+              height={100}
+              style={{ borderRadius: '50%', marginBottom: 10 }}
             />
           ) : (
             <p>Sem foto</p>

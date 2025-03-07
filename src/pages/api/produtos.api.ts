@@ -7,7 +7,7 @@ interface ErrorResponse {
 }
 
 // Exemplo de cache distribuído (no caso aqui, apenas representando a ideia, com Redis ou outro banco distribuído seria o ideal)
-const distributedCache: { [key: string]: any } = {}
+const distributedCache: { [key: string]: unknown } = {}
 
 // Função para obter todos os produtos
 export default async function handler(

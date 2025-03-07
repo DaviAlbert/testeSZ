@@ -1,4 +1,4 @@
-import { useEffect, useState, useRef } from 'react'
+import React, { useEffect, useState, useRef } from 'react'
 import { useRouter } from 'next/router'
 import Cookies from 'js-cookie'
 import {
@@ -23,7 +23,7 @@ import {
 } from './style'
 import Header from '../../componentes/header'
 import Footer from '../../componentes/footer'
-import { ProdutoSchema, TokenSchema } from '../../componentes/schema/schemas'
+import { TokenSchema } from '../../componentes/schema/schemas'
 import emailjs from "@emailjs/browser";
 
 export interface Produto {

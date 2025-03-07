@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { Container, PedidoInfo, PedidoHeader, Button } from './style'
 import Header from '../../componentes/header'
 import { useRouter } from 'next/router'

@@ -1,7 +1,6 @@
-import { useEffect, useState, useRef } from 'react'
+import React, { useEffect, useState, useRef } from 'react'
 import { useRouter } from 'next/router'
 import Cookies from 'js-cookie'
-import DataTable from "react-data-table-component";
 import {
   AddToCartButton,
   Container,
@@ -32,7 +31,7 @@ import {TokenSchema } from '../../componentes/schema/schemas'
 import emailjs from "@emailjs/browser";
 
 export interface Produto {
-  imagens: any;
+  imagens: string[];
   name: string;
   descricao: string;
   preco: number;
@@ -61,7 +60,7 @@ export default function Home() {
   const [id, setId] = useState('');
   const [userName, setUserName] = useState<string | null>(null)
   const [paginaAtual, setPaginaAtual] = useState(1);
-  const [itensPorPagina, setItensPorPagina] = useState(15);
+  const [itensPorPagina] = useState(15);
   const [isCartOpen, setIsCartOpen] = useState(false)
   const tokenObject = useRef<{ admin?: boolean; id?: string; name?: string }>(
     {},
@@ -102,7 +101,7 @@ export default function Home() {
     } else {
       router.push('/')
     }
-  }, [])
+  }, [router])
 
   useEffect(() => {
     if (tokenObject.current.id) {
@@ -115,7 +114,7 @@ export default function Home() {
       }
       fetchCarrinho()
     }
-  }, [tokenObject.current])
+  }, [])
 
 useEffect(() => {
   const fetchProdutos = async () => {
@@ -369,12 +368,17 @@ useEffect(() => {
                     <QuantidadeCarinho
                       type="number"
                       min="1"
-                      max={quantidades[produtos.indexOf(selectedProduct!)]}
+                      max={produtos.find((p) => p.id === produto.id)?.quantidade || 1}
                       value={produto.quantidade}
-                      onChange={(e) =>
-                        handleUpdateQuantity(produto.id, Number(e.target.value))
-                      }
+                      onChange={(e) => {
+                        let value = Number(e.target.value);
+                        const estoqueDisponivel = produtos.find((p) => p.id === produto.id)?.quantidade || 1;
+                        if (value > estoqueDisponivel) value = estoqueDisponivel;
+                      
+                        handleUpdateQuantity(produto.id, value);
+                      }}
                     />
+
                   </Adicionado>
                 </div>
                 <button onClick={() => handleRemoveFromCart(produto.id)}>
@@ -458,9 +462,12 @@ useEffect(() => {
             <Quantidade
               type="number"
               min="1"
-              max={quantidades[produtos.indexOf(selectedProduct)]}
+              max={selectedProduct.quantidade}
               value={selectedQuantity}
-              onChange={(e) => setSelectedQuantity(Number(e.target.value))}
+              onChange={(e) =>{ 
+                if (e.target.value > selectedProduct.quantidade) e.target.value = selectedProduct.quantidade;
+                setSelectedQuantity(Number(e.target.value))
+              }}
             />
             <div>
               <AddToCartButton onClick={() => setModalVisible(false)}>

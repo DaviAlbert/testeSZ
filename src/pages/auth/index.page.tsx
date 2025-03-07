@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import React, { useState } from 'react'
 import { useRouter } from 'next/router'
 import Cookies from 'js-cookie'
 import { LoginSchema } from '../../componentes/schema/schemas'
@@ -11,7 +11,7 @@ export default function Login() {
   const [message, setMessage] = useState('')
   const router = useRouter()
 
-  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>): void => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>): Promise<void> => {
     e.preventDefault()
     const formData = { email, senha }
     const validacao = LoginSchema.safeParse(formData)

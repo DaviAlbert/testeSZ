@@ -1,3 +1,4 @@
+import React from 'react'
 import { getCssText } from '@ignite-ui/react'
 import { Head, Html, Main, NextScript } from 'next/document'
 

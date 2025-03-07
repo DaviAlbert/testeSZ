@@ -45,7 +45,20 @@ export default async function handler(
     // 4️⃣ Se o carrinho não existir, criamos um novo
     if (!carrinho) {
       carrinho = await prisma.carrinho.create({
-        data: { idUsuario: userId },
+        data: { 
+          idUsuario: userId,
+          produtos: {
+            create: [
+              {
+                idProduto: produtoId,
+                quantidade: quantidade,
+              },
+            ],
+          },
+        },
+        include: {
+          produtos: true,
+        },
       })
     }
 

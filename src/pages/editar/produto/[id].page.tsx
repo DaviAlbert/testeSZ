@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import React, { useState, useEffect } from 'react'
 import { useRouter } from 'next/router'
 import Cookies from 'js-cookie'
 import Footer from '../../../componentes/footer'
@@ -20,6 +20,7 @@ import {
   FileImage,
   FileButton,
 } from './style'
+import Image from 'next/image'
 
 // Define a estrutura esperada do produto detalhado
 interface Produto {
@@ -84,7 +85,7 @@ export default function EditProduct() {
           setQuantidade(produtoData.quantidade)
           setPreco(produtoData.preco.toString())
           setFotoPrincipalBase64(produtoData.fotoPrincipal)
-          setFotosOpcionaisBase64(produtoData.imagens.map((img: any) => img.url) || [])
+          setFotosOpcionaisBase64(produtoData.imagens.map((img: { id: string; url: string }) => img.url) || [])
           setProduto(produtoData)
         }
       } catch (error) {
@@ -262,10 +263,13 @@ const handleFotosOpcionaisChange = async (event: React.ChangeEvent<HTMLInputElem
             />
           </FileInputWrapper>
           {fotoPrincipalBase64 && (
-          <img
+          <Image
             src={fotoPrincipalBase64}
             alt="Foto Principal"
-            style={{ width: '100%', maxHeight: '300px', objectFit: 'cover' }}
+            layout="responsive"
+            width={500}
+            height={300}
+            objectFit="cover"
           />
         )}
       </Campo>
