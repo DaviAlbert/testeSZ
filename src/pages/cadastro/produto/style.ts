@@ -146,15 +146,42 @@ export const Carrinho = styled('div', {
   },
 })
 
-export const Produto = styled('div', {
-  backgroundColor: '$gray700',
+export const QuantidadeContainer = styled('div', {
   display: 'flex',
-  width: '90%',
-  padding: '10px',
-  borderRadius: '8px',
-  margin: '10px',
-  textAlign: 'justify',
-  justifyContent: 'space-between',
+  alignItems: 'center',
+  gap: '10px',
+});
+
+export const Produto = styled('div', {
+  display: 'flex',
+  alignItems: 'center',
+  marginBottom: '15px',
+  borderBottom: '1px solid #ddd',
+  paddingBottom: '10px',
+
+  '& img': {
+    width: '50px',
+    height: '50px',
+    objectFit: 'cover',
+    marginRight: '10px',
+    borderRadius: '$sm',
+  },
+
+  '& div': {
+    flexGrow: 1,
+  },
+
+  '& button': {
+    background: 'none',
+    border: 'none',
+    fontSize: '18px',
+    cursor: 'pointer',
+    color: '$ignite500',
+
+    '&:hover': {
+      color: '$ignite300',
+    },
+  },
 })
 
 export const Quantidade = styled('input', {

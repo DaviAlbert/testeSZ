@@ -152,22 +152,23 @@ export const Fechar = styled('button', {
 })
 
 export const Produto = styled('div', {
-  display: 'flex',
-  alignItems: 'center',
+  display: 'flex', // Usando flex para alinhar imagem e conteúdo
+  alignItems: 'center', // Alinha o conteúdo verticalmente
   marginBottom: '15px',
   borderBottom: '1px solid #ddd',
   paddingBottom: '10px',
 
   '& img': {
-    width: '50px',
-    height: '50px',
-    objectFit: 'cover',
-    marginRight: '10px',
+    width: '100px', // Tamanho da imagem à esquerda
+    height: '100px', // Tamanho da imagem à esquerda
+    objectFit: 'cover', // Garante que a imagem cubra bem o espaço
+    marginRight: '20px', // Espaço entre a imagem e o conteúdo
     borderRadius: '$sm',
   },
 
   '& div': {
-    flexGrow: 1,
+    flexGrow: 1, // Faz com que o conteúdo ocupe o restante do espaço
+    textAlign: 'left', // Alinha o texto à esquerda
   },
 
   '& button': {
@@ -181,7 +182,28 @@ export const Produto = styled('div', {
       color: '$ignite300',
     },
   },
-})
+});
+
+export const ProdutoInfo = styled('div', {
+  display: 'flex',
+  flexDirection: 'column',
+  justifyContent: 'space-between',
+  gap: '10px',
+
+  '& h3': {
+    marginBottom: '10px',
+    color: '#fff',
+  },
+
+  '& p': {
+    marginBottom: '5px',
+    color: '#fff',
+  },
+
+  '& p:last-child': {
+    marginBottom: '0',
+  },
+});
 
 export const FinalizarCompra = styled('button', {
   width: '100%',
@@ -200,6 +222,12 @@ export const FinalizarCompra = styled('button', {
     background: 'darkgreen',
   },
 })
+
+export const QuantidadeContainer = styled('div', {
+  display: 'flex',
+  alignItems: 'center',
+  gap: '10px',
+});
 
 export const Quantidade = styled('input', {
   backgroundColor: '$gray600',

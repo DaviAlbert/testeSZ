@@ -106,6 +106,33 @@ export const Produto = styled('div', {
   },
 })
 
+export const QuantidadeContainer = styled('div', {
+  display: 'flex',
+  alignItems: 'center',
+  gap: '10px',
+});
+
+export const ProdutoInfo = styled('div', {
+  display: 'flex',
+  flexDirection: 'column',
+  justifyContent: 'space-between',
+  gap: '10px',
+
+  '& h3': {
+    marginBottom: '10px',
+    color: '#fff',
+  },
+
+  '& p': {
+    marginBottom: '5px',
+    color: '#fff',
+  },
+
+  '& p:last-child': {
+    marginBottom: '0',
+  },
+});
+
 export const Quantidade = styled('input', {
   backgroundColor: '$gray600',
   color: '$gray200',

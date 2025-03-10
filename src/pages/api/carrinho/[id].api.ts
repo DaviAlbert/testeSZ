@@ -7,11 +7,15 @@ export default async function handler(
 ) {
   const { id } = req.query
 
+  if (!id || typeof id !== 'string') {
+    return res.status(400).json({ error: 'ID de usuário inválido' })
+  }
+
   if (req.method === 'GET') {
     try {
-      // Obter os produtos do carrinho do usuário
+      // Obter o carrinho do usuário, buscando pelo idUsuario
       const carrinho = await prisma.carrinho.findUnique({
-        where: { idUsuario: String(id) }, // Usando o userId da URL
+        where: { idUsuario: id }, // Usando o id do usuário diretamente
         include: {
           produtos: {
             include: {
@@ -22,12 +26,14 @@ export default async function handler(
       })
 
       if (carrinho) {
-        // Retorna os produtos e suas quantidades para o carrinho
+        // Mapeia os produtos do carrinho, incluindo a descrição e foto principal
         const produtosCarrinho = carrinho.produtos.map((item) => ({
           id: item.produto.id,
           name: item.produto.name,
           quantidade: item.quantidade,
           preco: item.produto.preco,
+          descricao: item.produto.descricao,  // Incluindo a descrição
+          fotoPrincipal: item.produto.fotoPrincipal, // Incluindo a foto principal
         }))
 
         return res.status(200).json({ produtos: produtosCarrinho })
@@ -36,9 +42,7 @@ export default async function handler(
       }
     } catch (error) {
       console.error('Erro no backend:', error instanceof Error ? error.message : error)
-      return res
-        .status(500)
-        .json({ error: 'Erro ao buscar produtos do carrinho' })
+      return res.status(500).json({ error: 'Erro ao buscar produtos do carrinho' })
     }
   } else {
     res.status(405).json({ error: 'Método não permitido' })

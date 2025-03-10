@@ -20,7 +20,10 @@ import {
   Fechar,
   Backdrop,
   Produto,
+  ProdutoInfo,
+  QuantidadeContainer,
 } from './style'
+import Image from 'next/image'
 import Header from '../../componentes/header'
 import Footer from '../../componentes/footer'
 import { TokenSchema } from '../../componentes/schema/schemas'
@@ -36,11 +39,14 @@ export interface Produto {
   fotoPrincipal?: string;
   fotosOpcionais?: { url: string }[];
 }
+
 interface ProdutoCarrinho {
   id: string;
   name: string;
   quantidade: number;
   preco: number;
+  fotoPrincipal?: string;
+  descricao?: string;
 }
 
 export default function Home() {
@@ -53,7 +59,6 @@ export default function Home() {
   const [admin, setAdmin] = useState(false);
   const [totalCarrinho, setTotalCarrinho] = useState(0);
   const [id, setId] = useState('');
-  const [quantidades] = useState<number[]>([])
   const [userName, setUserName] = useState<string | null>(null);
   const [produtosCarrinho, setProdutosCarrinho] = useState<ProdutoCarrinho[]>([]);
   const [isCartOpen, setIsCartOpen] = useState(false);
@@ -374,42 +379,57 @@ export default function Home() {
         </ProductList>
       </Container>
 
-      {isCartOpen && (
-        <>
-          <Backdrop onClick={toggleCart} />
-          <CarrinhoContainer>
-            <Fechar onClick={toggleCart}>✖</Fechar>
-
-            {produtosCarrinho.length > 0 ? (
-              produtosCarrinho.map((produto, index) => (
-                <Produto key={index}>
-                  <div>
-                    <h3 style={{ color: '#fff', marginBottom: '5px' }}>
-                      {produto.name}
-                    </h3>
-                    <p>R$ {produto.preco.toFixed(2).replace('.', ',')}</p>
-                    <Adicionado>
-                    <p>Qtd: </p>
-                    <QuantidadeCarinho
-                      type="number"
-                      min="1"
-                      max={quantidades[produtos.indexOf(selectedProduct!)]}
-                      value={produto.quantidade}
-                      onChange={(e) => handleUpdateQuantity(produto.id, Number(e.target.value))}
+          {isCartOpen && (
+            <>
+              <Backdrop onClick={toggleCart} />
+              <CarrinhoContainer className={isCartOpen ? 'open' : 'closed'}>
+                <Fechar onClick={toggleCart}>✖</Fechar>
+      
+                {produtosCarrinho.length > 0 ? (
+                  produtosCarrinho.map((produto, index) => (
+                    <Produto key={index}>
+                    <Image
+                      src={produto.fotoPrincipal || '/default-image.jpg'}
+                      alt={produto.name}
+                      width={100}
+                      height={100}
                     />
-                    </Adicionado>
-                  </div>
-                  <button onClick={() => handleRemoveFromCart(produto.id)}>🗑️</button>
-                </Produto>
-              ))
-            ) : (
-              <p>Seu carrinho está vazio.</p>
-            )}
-            <h3>Total: R$ {totalCarrinho.toFixed(2).replace('.', ',')}</h3>
-            <FinalizarCompra onClick={sendOrderEmail}>Finalizar Compra</FinalizarCompra>
-          </CarrinhoContainer>
-        </>
-      )}
+                    <ProdutoInfo>
+                    <h3>{produto.name}</h3>
+                    <p>{produto.descricao}</p>
+                    <p>R$ {produto.preco.toFixed(2).replace('.', ',')}</p>
+    
+                    <QuantidadeContainer>
+                      <p>Qtd: </p>
+                      <QuantidadeCarinho
+                        type="number"
+                        min="1"
+                        max={produtos.find((p) => p.id === produto.id)?.quantidade || 1}
+                        value={produto.quantidade}
+                        onChange={(e) => {
+                          let value = Number(e.target.value);
+                          const estoqueDisponivel = produtos.find((p) => p.id === produto.id)?.quantidade || 1;
+                          if (value > estoqueDisponivel) value = estoqueDisponivel;
+
+                          handleUpdateQuantity(produto.id, value);
+                        }}
+                      />
+                    </QuantidadeContainer>
+                  </ProdutoInfo>
+                  <button onClick={() => handleRemoveFromCart(produto.id)}>
+                    🗑️
+                  </button>
+                  </Produto>
+                  ))
+                ) : (
+                  <p>Seu carrinho está vazio.</p>
+                )}
+      
+                <h3>Total: R$ {totalCarrinho.toFixed(2).replace('.', ',')}</h3>
+                <FinalizarCompra onClick={sendOrderEmail}>Finalizar Compra</FinalizarCompra>
+              </CarrinhoContainer>
+            </>
+          )}
 
       {modalVisible && selectedProduct && (
         <ModalOverlay style={{ backgroundColor: '$gray800' }}>

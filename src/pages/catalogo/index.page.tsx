@@ -24,7 +24,10 @@ import {
   PaginationContainer,
   PageButton,
   Ellipsis,
+  QuantidadeContainer,
+  ProdutoInfo,
 } from './style'
+import Image from 'next/image'
 import Header from '../../componentes/header'
 import Footer from '../../componentes/footer'
 import {TokenSchema } from '../../componentes/schema/schemas'
@@ -43,6 +46,8 @@ export interface Produto {
 interface ProdutoCarrinho {
   id: string;
   name: string;
+  descricao: string;
+  fotoPrincipal: string;
   quantidade: number;
   preco: number;
 }
@@ -51,7 +56,6 @@ export default function Home() {
   const router = useRouter()
   const [produtos, setProdutos] = useState<Produto[]>([])
   const [produtoPesquisa, setProdutoPesquisa] = useState('')
-  const [quantidades] = useState<number[]>([])
   const [modalVisible, setModalVisible] = useState(false)
   const [selectedProduct, setSelectedProduct] = useState<Produto | null>(null)
   const [selectedQuantity, setSelectedQuantity] = useState(1)
@@ -121,11 +125,15 @@ useEffect(() => {
     try {
       const response = await fetch(`/api/produtos?pagina=${paginaAtual}&limite=${itensPorPagina}`);
       const data = await response.json();
+      if (!Array.isArray(data)) {
+        console.error("Erro: A API não retornou um array de produtos", data);
+        return;
+      }
+
       const produtosFormatados = data.map((produto) => ({
         ...produto,
         imagens: produto.imagens ?? [],
       }));
-      console.log('Dados recebidos:', data);
       setProdutos(produtosFormatados);
     } catch (error) {
       console.error('Erro ao buscar produtos:', error);
@@ -139,14 +147,13 @@ useEffect(() => {
     try {
 
       // Chama a primeira API para criar o pedido após adicionar o produto ao carrinho
-      const resultado = await fetch('http://localhost:3000/api/pedidos/criar', {
+      await fetch('http://localhost:3000/api/pedidos/criar', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({ userId: id }),
       })
-      console.log(resultado)
 
       // Chama a segunda API para pegar todos os e-mails dos administradores
       const response = await fetch('/api/sendAdminEmail', {
@@ -263,6 +270,8 @@ useEffect(() => {
             {
               id: selectedProduct.id,
               name: selectedProduct.name,
+              descricao: selectedProduct.descricao,
+              fotoPrincipal: selectedProduct.fotoPrincipal || '',
               quantidade: selectedQuantity,
               preco: selectedProduct.preco,
             },
@@ -314,7 +323,6 @@ useEffect(() => {
 
   const toggleCart = () => {
     setIsCartOpen(!isCartOpen)
-    console.log(isCartOpen)
   }
 
   // Filtra os produtos com base no nome, descrição e preço
@@ -357,34 +365,39 @@ useEffect(() => {
 
           {produtosCarrinho.length > 0 ? (
             produtosCarrinho.map((produto, index) => (
-              <Produto key={index}>
-                <div>
-                  <h3 style={{ color: '#fff', marginBottom: '5px' }}>
-                    {produto.name}
-                  </h3>
-                  <p>R$ {produto.preco.toFixed(2).replace('.', ',')}</p>
-                  <Adicionado>
-                    <p>Qtd: </p>
-                    <QuantidadeCarinho
-                      type="number"
-                      min="1"
-                      max={produtos.find((p) => p.id === produto.id)?.quantidade || 1}
-                      value={produto.quantidade}
-                      onChange={(e) => {
-                        let value = Number(e.target.value);
-                        const estoqueDisponivel = produtos.find((p) => p.id === produto.id)?.quantidade || 1;
-                        if (value > estoqueDisponivel) value = estoqueDisponivel;
-                      
-                        handleUpdateQuantity(produto.id, value);
-                      }}
+                    <Produto key={index}>
+                    <Image
+                      src={produto.fotoPrincipal || '/default-image.jpg'}
+                      alt={produto.name}
+                      width={100}
+                      height={100}
                     />
+                    <ProdutoInfo>
+                    <h3>{produto.name}</h3>
+                    <p>{produto.descricao}</p>
+                    <p>R$ {produto.preco.toFixed(2).replace('.', ',')}</p>
+    
+                    <QuantidadeContainer>
+                      <p>Qtd: </p>
+                      <QuantidadeCarinho
+                        type="number"
+                        min="1"
+                        max={produtos.find((p) => p.id === produto.id)?.quantidade || 1}
+                        value={produto.quantidade}
+                        onChange={(e) => {
+                          let value = Number(e.target.value);
+                          const estoqueDisponivel = produtos.find((p) => p.id === produto.id)?.quantidade || 1;
+                          if (value > estoqueDisponivel) value = estoqueDisponivel;
 
-                  </Adicionado>
-                </div>
-                <button onClick={() => handleRemoveFromCart(produto.id)}>
-                  🗑️
-                </button>
-              </Produto>
+                          handleUpdateQuantity(produto.id, value);
+                        }}
+                      />
+                    </QuantidadeContainer>
+                  </ProdutoInfo>
+                  <button onClick={() => handleRemoveFromCart(produto.id)}>
+                    🗑️
+                  </button>
+                  </Produto>
             ))
           ) : (
             <p>Seu carrinho está vazio.</p>
@@ -411,7 +424,7 @@ useEffect(() => {
             )}
             <div onClick={() => handleClickProduto(produto.id)}>
               <Item>{produto.descricao}</Item>
-              <Item>Preço: {produto.preco}</Item>
+              <Item>Preço: R$ {produto.preco}</Item>
               <Item>Quantidade disponível: {produto.quantidade}</Item>
             </div>
             <AddToCartButton onClick={() => handleAddToCart(produto)}>
@@ -465,7 +478,7 @@ useEffect(() => {
               max={selectedProduct.quantidade}
               value={selectedQuantity}
               onChange={(e) =>{ 
-                if (e.target.value > selectedProduct.quantidade) e.target.value = selectedProduct.quantidade;
+                if (Number(e.target.value) > selectedProduct.quantidade) e.target.value = selectedProduct.quantidade.toString();
                 setSelectedQuantity(Number(e.target.value))
               }}
             />

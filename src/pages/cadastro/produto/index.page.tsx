@@ -4,6 +4,7 @@ import Header from '../../../componentes/header'
 import { useRouter } from 'next/router'
 import Cookies from 'js-cookie'
 import { ProdutoSchema } from '../../../componentes/schema/schemas'
+import imageCompression from 'browser-image-compression'
 import {
   AddToCartButton,
   Container,
@@ -53,14 +54,25 @@ export default function AddProduct() {
   }, [router])
 
   // Função para reduzir e converter imagem para Base64
-  const convertImageToBase64 = (file: File): Promise<string> => {
+const convertImageToBase64 = async (file: File): Promise<string> => {
+  try {
+    const options = {
+      maxSizeMB: 0.5,
+      maxWidthOrHeight: 1024,
+      useWebWorker: true,
+    }
+    const compressedFile = await imageCompression(file, options)
+    const reader = new FileReader()
+    reader.readAsDataURL(compressedFile)
     return new Promise((resolve, reject) => {
-      const reader = new FileReader()
-      reader.readAsDataURL(file)
       reader.onloadend = () => resolve(reader.result as string)
       reader.onerror = reject
     })
+  } catch (error) {
+    console.error('Erro ao compactar a imagem:', error)
+    throw error
   }
+}
 
   // Foto principal
   const handleFotoPrincipalChange = async (event: React.ChangeEvent<HTMLInputElement>) => {

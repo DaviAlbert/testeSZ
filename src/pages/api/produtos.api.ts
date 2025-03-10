@@ -6,26 +6,15 @@ interface ErrorResponse {
   error: string
 }
 
-// Exemplo de cache distribuído (no caso aqui, apenas representando a ideia, com Redis ou outro banco distribuído seria o ideal)
-const distributedCache: { [key: string]: unknown } = {}
-
-// Função para obter todos os produtos
+// Função para obter todos os produtos direto do banco de dados
 export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse,
 ): Promise<void> {
   try {
-    console.log('Verificando no cache distribuído para produtos...')
+    console.log('Buscando produtos diretamente no banco de dados...')
 
-    // Verificar se os produtos estão em cache
-    if (distributedCache['produtos']) {
-      console.log('Dados encontrados no cache distribuído.')
-      return res.status(200).json(distributedCache['produtos'])
-    }
-
-    console.log('Dados não encontrados no cache. Buscando no banco de dados...')
-
-    // Caso os dados não estejam no cache, buscar no banco de dados
+    // Buscar produtos no banco de dados
     const produtos = await prisma.produto.findMany({
       include: {
         imagens: true,
@@ -37,31 +26,31 @@ export default async function handler(
       return res.status(404).json({ error: 'Nenhum produto encontrado' })
     }
 
-    console.log('Dados de produtos encontrados no banco. Armazenando no cache distribuído...')
+    console.log('Produtos encontrados no banco.')
 
-    // Armazenar os dados no cache distribuído
-    distributedCache['produtos'] = produtos
+    // 🔹 Convertendo BigInt para Number
+    const produtosFormatados = produtos.map((produto) => ({
+      ...produto,
+      preco: Number(produto.preco), // Se 'preco' for BigInt, converte para Number
+      quantidade: Number(produto.quantidade), // Se 'quantidade' for BigInt, converte para Number
+    }))
 
-    console.log('Dados de produtos armazenados no cache distribuído.')
-    res.status(200).json(produtos)
+    res.status(200).json(produtosFormatados)
   } catch (error) {
     console.error('Erro ao buscar produtos:', error)
     res
       .status(500)
-      .json({ error: `Erro ao buscar produtos: ${error.message || error}` } as ErrorResponse)
+      .json({ error: `Erro ao buscar produtos: ${error.message || error}` })
   }
 }
 
-// Função de busca de um produto específico com cache distribuído
+
+// Função para buscar um produto específico diretamente do banco de dados
 export async function get(id: string, res: NextApiResponse): Promise<void> {
   try {
+    console.log(`Buscando produto com ID: ${id} diretamente no banco de dados...`)
 
-    // Verificar se o produto está em cache distribuído
-    if (distributedCache[`produto-${id}`]) {
-      return res.status(200).json(distributedCache[`produto-${id}`])
-    }
-
-    // Caso não tenha no cache, buscar no banco de dados
+    // Buscar um produto pelo ID
     const produto = await prisma.produto.findUnique({
       where: { id },
       include: {
@@ -70,16 +59,11 @@ export async function get(id: string, res: NextApiResponse): Promise<void> {
     })
 
     if (!produto) {
-      console.log(`Produto não encontrado no banco de dados para o ID: ${id}`)
+      console.log(`Produto com ID: ${id} não encontrado.`)
       return res.status(404).json({ error: 'Produto não encontrado' })
     }
 
-    console.log(`Produto com ID: ${id} encontrado no banco. Armazenando no cache distribuído...`)
-
-    // Armazenar o produto no cache distribuído
-    distributedCache[`produto-${id}`] = produto
-
-    console.log(`Produto com ID: ${id} armazenado no cache distribuído.`)
+    console.log(`Produto com ID: ${id} encontrado no banco.`)
     res.status(200).json(produto)
   } catch (error) {
     console.error('Erro ao buscar produto:', error)

@@ -90,7 +90,13 @@ export default function AdminDashboard() {
     },
     {
       name: 'Preço',
-      selector: (row) => `R$ ${row.preco.toFixed(2).replace('.', ',')}`,
+      selector: (row) => {
+        const preco = parseFloat(row.preco);
+        if (isNaN(preco)) {
+          return 'R$ 0,00'; // Caso o preço não seja um número, retorna '0,00'
+        }
+        return `R$ ${preco.toFixed(2).replace('.', ',')}`; // Aplica o formato corretamente
+      },
       sortable: true,
     },
     {
@@ -107,9 +113,9 @@ export default function AdminDashboard() {
   ]
 
   // Função para mudar a quantidade de itens por página
-  const handleItemsPerPageChange = (newPerPage: number, page: number) => {
+  const handleItemsPerPageChange = (newPerPage: number) => {
     setItemsPerPage(newPerPage)
-    setCurrentPage(1) // Sempre reseta para a página 1 quando muda o número de itens por página
+    setCurrentPage(1)
   }
 
   // Função para navegar entre as páginas

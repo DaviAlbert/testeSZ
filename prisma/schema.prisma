@@ -77,6 +77,8 @@ model CarrinhoProduto {
   idCarrinho  String
   idProduto   String
   quantidade  Int      @default(1)
+  descricao   String   // Descrição do produto
+  fotoPrincipal String // Foto principal do produto
   created_at  DateTime @default(now())
   updated_at  DateTime @updatedAt
 
@@ -87,6 +89,7 @@ model CarrinhoProduto {
   @@map("carrinho_produto")
   @@index([idCarrinho, idProduto])
 }
+
 
 model Pedido {
   id         String     @id @default(uuid())

@@ -45,13 +45,15 @@ export default async function handler(
     // 4️⃣ Se o carrinho não existir, criamos um novo
     if (!carrinho) {
       carrinho = await prisma.carrinho.create({
-        data: { 
+        data: {
           idUsuario: userId,
           produtos: {
             create: [
               {
                 idProduto: produtoId,
                 quantidade: quantidade,
+                descricao: produtoExiste.descricao,  // Adiciona a descrição
+                fotoPrincipal: produtoExiste.fotoPrincipal, // Adiciona a foto principal
               },
             ],
           },
@@ -86,12 +88,14 @@ export default async function handler(
         },
       })
     } else {
-      // Adiciona o produto ao carrinho
+      // Adiciona o produto ao carrinho com descrição e foto principal
       await prisma.carrinhoProduto.create({
         data: {
           idCarrinho: carrinho!.id,
           idProduto: produtoId,
           quantidade,
+          descricao: produtoExiste.descricao,  // Adiciona a descrição
+          fotoPrincipal: produtoExiste.fotoPrincipal, // Adiciona a foto principal
         },
       })
     }

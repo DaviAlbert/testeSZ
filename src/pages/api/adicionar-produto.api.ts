@@ -3,6 +3,14 @@ import { PrismaClient } from "@prisma/client";
 
 const prisma = new PrismaClient();
 
+export const config = {
+  api: {
+    bodyParser: {
+      sizeLimit: "50mb",
+    },
+  },
+};
+
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   if (req.method !== "POST") {
     return res.status(405).json({ error: "Método não permitido" });
@@ -10,39 +18,43 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
   const { name, descricao, preco, quantidade, fotoPrincipal, fotosOpcionais } = req.body;
 
-  // Verifica se os itens existe antes de salvar no banco de dados
   if (!name || !descricao || !preco || !quantidade || !fotoPrincipal) {
     return res.status(400).json({ error: "Todos os campos obrigatórios devem ser preenchidos" });
   }
 
+  if (preco <= 0 || isNaN(preco)) {
+    return res.status(400).json({ error: "O preço deve ser um número válido maior que zero." });
+  }
+  if (quantidade <= 0 || isNaN(quantidade)) {
+    return res.status(400).json({ error: "A quantidade deve ser um número válido maior que zero." });
+  }
+
   if (Array.isArray(fotosOpcionais) && fotosOpcionais.length > 3) {
-    return res.status(400).json({ error: "Você pode adicionar no máximo 3 fotos opcionais" });
+    return res.status(400).json({ error: "Você pode adicionar no máximo 3 fotos opcionais." });
   }
 
   try {
-    // Criar o produto no banco
+    const precoFormatado = parseFloat(preco).toFixed(2);
     const produto = await prisma.produto.create({
       data: {
         name,
         descricao,
-        preco: parseFloat(preco),
+        preco: parseFloat(precoFormatado),
         quantidade: Number(quantidade),
         fotoPrincipal,
       },
     });
-    // Criar imagens opcionais SE houverem
+
     if (Array.isArray(fotosOpcionais) && fotosOpcionais.length > 0) {
-      // Garantir que todas as imagens sejam strings válidas
       const imagensValidas = fotosOpcionais.filter((foto) => typeof foto === "string");
 
       if (imagensValidas.length > 0) {
-        // Salvar todas as imagens usando Promise.all para maior eficiência
         await Promise.all(
           imagensValidas.map((url) =>
             prisma.imagem.create({
               data: {
                 url,
-                idProduto: produto.id, // Associando ao produto criado
+                idProduto: produto.id,
               },
             })
           )
@@ -50,20 +62,12 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       }
     }
 
-    // Buscar o produto novamente com as imagens salvas
-    const produtoComImagens = await prisma.produto.findUnique({
-      where: { id: produto.id },
-      include: { imagens: true },
-    });
-
-    return res.status(201).json({
-      message: "Produto cadastrado com sucesso!",
-      produto: produtoComImagens,
-    });
+    return res.status(201).json({message: "Produto cadastrado com sucesso!"});
   } catch (error) {
+
     return res.status(500).json({
       error: "Erro ao criar produto",
-      details: (error as Error).message,
+      details: error
     });
   }
 }
