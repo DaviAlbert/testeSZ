@@ -121,12 +121,13 @@ const slideIn = keyframes({
 });
 
 export const CarrinhoContainer = styled('div', {
+  marginTop: '80px',
   background: '$gray800',
   position: 'fixed',
   top: 0,
   right: 0,
   width: '350px',
-  height: '100vh',
+  height: '86%',
   padding: '20px',
   boxShadow: '-2px 0px 10px rgba(0, 0, 0, 0.2)',
   zIndex: 10,
@@ -134,6 +135,8 @@ export const CarrinhoContainer = styled('div', {
   display: 'flex',
   flexDirection: 'column',
   animation: `${slideIn} 0.3s ease-out`,
+  overflowX: 'hidden',
+  borderRadius: '0 0 8px 8px',
 });
 
 export const Fechar = styled('button', {

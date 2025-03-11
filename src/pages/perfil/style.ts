@@ -1,6 +1,7 @@
 import { styled } from '@ignite-ui/react'
 
 export const Container = styled('div', {
+  marginTop:'100px',
   display: 'flex',
   flexDirection: 'column',
   alignItems: 'center',

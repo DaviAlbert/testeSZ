@@ -14,7 +14,6 @@ import {
   ModalOverlay,
   Quantidade,
   Nav,
-  Adicionado,
   Backdrop,
   CarrinhoContainer,
   FinalizarCompra,
@@ -207,6 +206,11 @@ useEffect(() => {
   const handleRemoveFromCart = async (produtoId: string) => {
     if (!tokenObject.current.id) return;
 
+    const isConfirmed = window.confirm("Remover este produto do carrinho?");
+    if (!isConfirmed) {
+      return;
+    }
+
     try {
       const response = await fetch('/api/carrinho/remover', {
         method: 'DELETE',
@@ -257,6 +261,7 @@ useEffect(() => {
     if (response.ok) {
       setProdutosCarrinho((prevCarrinho) => {
         const produtoExistente = prevCarrinho.find((p) => p.id === produtoId);
+        setIsCartOpen(true); 
   
         if (produtoExistente) {
           return prevCarrinho.map((p) =>
@@ -289,37 +294,42 @@ useEffect(() => {
   };
   
 
-  const handleUpdateQuantity = async (produtoId: string, novaQuantidade: number) => {
-    if (!tokenObject.current.id) return;
-  
-    try {
-      const response = await fetch('/api/carrinho/atualizar', {
-        method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          userId: tokenObject.current.id,
-          produtoId,
-          quantidade: novaQuantidade,
-        }),
-      });
-  
-      if (response.ok) {
-        setProdutosCarrinho((prev) =>
-          prev.map((produto) =>
-            produto.id === produtoId ? { ...produto, quantidade: novaQuantidade } : produto
-          )
-        );
-      } else {
-        const errorData = await response.json();
-        alert(`Erro ao atualizar quantidade: ${errorData.error || 'Erro desconhecido'}`);
-      }
-    } catch (error) {
-      console.error('Erro na requisição:', error);
-      alert('Erro ao atualizar a quantidade do produto.');
+const handleUpdateQuantity = async (produtoId: string, novaQuantidade: number) => {
+  if (!tokenObject.current.id) return;
+
+  if (novaQuantidade < 1) {
+    handleRemoveFromCart(produtoId);
+    return;
+  }
+
+  try {
+    const response = await fetch('/api/carrinho/atualizar', {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        userId: tokenObject.current.id,
+        produtoId,
+        quantidade: novaQuantidade,
+      }),
+    });
+
+    if (response.ok) {
+      setProdutosCarrinho((prev) =>
+        prev.map((produto) =>
+          produto.id === produtoId ? { ...produto, quantidade: novaQuantidade } : produto
+        )
+      );
+    } else {
+      const errorData = await response.json();
+      alert(`Erro ao atualizar quantidade: ${errorData.error || 'Erro desconhecido'}`);
     }
-  }  
+  } catch (error) {
+    console.error('Erro na requisição:', error);
+    alert('Erro ao atualizar a quantidade do produto.');
+  }
+}; 
 
   const toggleCart = () => {
     setIsCartOpen(!isCartOpen)

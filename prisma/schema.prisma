@@ -104,7 +104,7 @@ model Pedido {
   @@map("pedido")
   @@index([id])
   @@index([idUsuario])
-  @@index([created_at]) // Índice para buscas rápidas por data
+  @@index([created_at])
 }
 
 model PedidoProduto {

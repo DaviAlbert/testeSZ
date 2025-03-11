@@ -48,10 +48,10 @@ export default function Perfil() {
         .then((data) => {
           setName(data.name)
           setEmail(data.email)
-          setTelefone(data.telefone)
-          const dataFormatada = new Date(data.Nascimento).toISOString().split('T')[0]
+          setTelefone(data.phone)
+          const dataFormatada = data.birthday ? new Date(data.birthday).toISOString().split('T')[0] : ''
           setNascimento(dataFormatada)
-          setFoto(data.foto)
+          setFoto(data.photo)
           setAdmin(data.admin)
         })
         .catch((error) => console.error('Erro ao buscar perfil:', error))
@@ -87,8 +87,7 @@ export default function Perfil() {
       setMessage(`Erro: ${data.error}`)
     }
   }
-
-  console.log(nascimento)
+  
   return (
     <>
       <Header isLoggedIn={isLoggedIn} userName={name} Itens={-1} Admin={admin} />

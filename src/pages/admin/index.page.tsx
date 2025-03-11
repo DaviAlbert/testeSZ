@@ -174,6 +174,7 @@ export default function AdminDashboard() {
   return (
     <>
       <Header isLoggedIn={isLoggedIn} userName={userName} toggleCart={() => {}} Itens={-1} Admin={isAdmin} />
+      <div style={{marginTop: '100px'}}>
       <div style={{margin: 'auto', display:'flex', justifyContent:'center', gap:'10px', marginBottom:'20px'}}>
         <Button onClick={() => (window.location.href = 'cadastro/usuario')}>Criar Usuário</Button>
         <Button onClick={() => (window.location.href = 'cadastro/produto')}>Criar Produto</Button>
@@ -204,6 +205,7 @@ export default function AdminDashboard() {
           customStyles={customStyles}
         />
       </Container>
+      </div>
     </>
   )
 }

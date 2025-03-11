@@ -1,6 +1,7 @@
 import { styled } from '@ignite-ui/react'
 
 export const Container = styled('div', {
+  marginTop:'100px',
   marginLeft: 'auto',
   display: 'flex',
   flexDirection: 'column',
@@ -15,6 +16,7 @@ export const Campo = styled('div', {
 })
 
 export const Input = styled('input', {
+  textAlign: 'center',
   width: '100%',
   maxWidth: 400,
   padding: '$2',

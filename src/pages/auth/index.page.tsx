@@ -41,8 +41,8 @@ export default function Login() {
 
         setMessage(`Login bem-sucedido! Bem-vindo, ${data.user.name}`)
 
-        // Redireciona para o catálogo
-        router.push('/catalogo')
+        // Redireciona para a página principal
+        router.push('/')
       } else {
         const errorData = await response.json()
         setMessage(`Erro: ${errorData.error}`)

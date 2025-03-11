@@ -195,7 +195,7 @@ export default function AddUser() {
               />
             </Campo>
             <Campo>
-              <Label style={{marginRight: '10px'}}>Data De Nascimento:</Label>
+              <Label style={{marginRight: '10px'}}>Data De nascimento:</Label>
               <Input style={{width: '25%'}}
                 type="date"
                 placeholder="Digite sua data de nascimento"

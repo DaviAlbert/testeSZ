@@ -16,7 +16,6 @@ import {
   Titulo,
   FinalizarCompra,
   CarrinhoContainer,
-  Adicionado,
   Fechar,
   Backdrop,
   Produto,
@@ -93,7 +92,7 @@ export default function Home() {
     } else {
       router.push('/');
     }
-  }, []);
+  }, [router]);
 
   useEffect(() => {
     if (!isLoggedIn || !tokenObject.current.id) return;
@@ -177,8 +176,7 @@ export default function Home() {
           body: JSON.stringify({ userId: tokenObject.current.id }),
         });
       }
-  
-      // 🔴 NOVA PARTE: Limpar o carrinho no frontend
+
       setProdutosCarrinho([]);
       alert("Compra finalizada! Seu carrinho foi esvaziado.");
     } catch (error) {
@@ -189,6 +187,11 @@ export default function Home() {
 
   const handleRemoveFromCart = async (produtoId: string) => {
     if (!tokenObject.current.id) return;
+
+    const isConfirmed = window.confirm("Remover este produto do carrinho?");
+    if (!isConfirmed) {
+      return;
+    }
 
     try {
       const response = await fetch('/api/carrinho/remover', {
@@ -272,6 +275,11 @@ export default function Home() {
 
   const handleUpdateQuantity = async (produtoId: string, novaQuantidade: number) => {
     if (!tokenObject.current.id) return;
+    
+    if (novaQuantidade < 1) {
+      handleRemoveFromCart(produtoId);
+      return;
+    }
   
     try {
       const response = await fetch('/api/carrinho/atualizar', {
@@ -322,7 +330,7 @@ export default function Home() {
         Itens={produtosCarrinho.length}
         Admin={admin}
       />
-
+      <div style={{marginTop: '100px'}}>
       <Titulo>Ofertas especiais:</Titulo>
       <Container>
         <ProductList>
@@ -455,6 +463,7 @@ export default function Home() {
           </Modal>
         </ModalOverlay>
       )}
+      </div>
       <Footer />
     </>
   )
