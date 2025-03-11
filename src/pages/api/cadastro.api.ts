@@ -26,10 +26,10 @@ export default async function handler(
         name,
         email,
         password: hashedPassword,
-        admin,
-        foto: imagemBase64,
-        telefone,
-        Nascimento: new Date(nascimento),
+        admin: admin ?? false,
+        photo: imagemBase64,
+        phone: telefone || '',
+        birthday: new Date(nascimento) || new Date('2000-01-01'),
       },
     })
 

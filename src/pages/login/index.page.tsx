@@ -98,7 +98,6 @@ export default function Cadastro() {
 
       if (response.ok) {
         const data = await response.json()
-        Cookies.set('imagem', data.user.foto)
         Cookies.set(
           'authToken',
           JSON.stringify({
